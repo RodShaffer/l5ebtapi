@@ -4,12 +4,13 @@ namespace l5ebtapi\l5ebtapi;
 
 class L5ebtapi
 {
+
     /**
-     * Create a new Skeleton Instance
+     * Create a new L5ebtapi Instance
      */
     public function __construct()
     {
-        // constructor body
+        // Constructor body
     }
 
     /**

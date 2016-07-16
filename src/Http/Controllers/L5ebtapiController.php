@@ -2,11 +2,10 @@
 
 namespace l5ebtapi\l5ebtapi\Http\Controllers;
 
-use Illuminate\Http\Request;
+//use Illuminate\Http\Request;
 
-use DOMDocument;
+//use DOMDocument;
 use GuzzleHttp\Client;
-
 use Illuminate\Support\Facades\Log;
 
 //use Intervention\Image\Facades\Image;
@@ -90,8 +89,9 @@ class L5ebtapiController extends Controller
     public function getEbayOfficialTime()
     {
 
+        return 'This will return the eBay official time in future release.';
 
-    }
+    }// END getEbayOfficialTime()
 
     /**
      * Make an eBay API request
