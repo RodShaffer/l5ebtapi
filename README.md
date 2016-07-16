@@ -2,9 +2,6 @@
 
 [![Latest Version on Packagist][ico-version]][link-packagist]
 [![Software License][ico-license]](LICENSE.md)
-[![Build Status][ico-travis]][link-travis]
-[![Coverage Status][ico-scrutinizer]][link-scrutinizer]
-[![Quality Score][ico-code-quality]][link-code-quality]
 [![Total Downloads][ico-downloads]][link-downloads]
 
 Laravel 5.2 eBay Trading API Package. Easily add the eBay Trading API capabilities to your Laravel 5.2 projects.
@@ -42,12 +39,12 @@ Please see [CONTRIBUTING](CONTRIBUTING.md) and [CONDUCT](CONDUCT.md) for details
 
 ## Security
 
-If you discover any security related issues, please email :author_email instead of using the issue tracker.
+If you discover any security related issues, please email l5ebtapipkg@yahoo.com instead of using the issue tracker.
 
 ## Credits
 
 - [Rod Shaffer][https://github.com/l5ebtapi/l5ebtapi]
-- [All Contributors][link-contributors]
+- [Rod Shaffer][https://github.com/l5ebtapi/l5ebtapi]
 
 ## License
 
@@ -55,15 +52,8 @@ The MIT License (MIT). Please see [License File](LICENSE.md) for more informatio
 
 [ico-version]: https://img.shields.io/packagist/v/:vendor/:package_name.svg?style=flat-square
 [ico-license]: https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square
-[ico-travis]: https://img.shields.io/travis/:vendor/:package_name/master.svg?style=flat-square
-[ico-scrutinizer]: https://img.shields.io/scrutinizer/coverage/g/:vendor/:package_name.svg?style=flat-square
-[ico-code-quality]: https://img.shields.io/scrutinizer/g/:vendor/:package_name.svg?style=flat-square
-[ico-downloads]: https://img.shields.io/packagist/dt/:vendor/:package_name.svg?style=flat-square
+[ico-downloads]: https://img.shields.io/packagist/dt/l5ebtapi/l5ebtapi.svg?style=flat-square
 
 [link-packagist]: https://packagist.org/packages/l5ebtapi/l5ebtapi
-[link-travis]: https://travis-ci.org/l5ebtapi/l5ebtapi
-[link-scrutinizer]: https://scrutinizer-ci.com/g/l5ebtapi/l5ebtapi/code-structure
-[link-code-quality]: https://scrutinizer-ci.com/g/l5ebtapi/l5ebtapi
 [link-downloads]: https://packagist.org/packages/l5ebtapi/l5ebtapi
 [link-author]: https://github.com/l5ebtapi
-[link-contributors]: ../../contributors
