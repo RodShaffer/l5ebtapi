@@ -7,7 +7,7 @@
 [![Quality Score][ico-code-quality]][link-code-quality]
 [![Total Downloads][ico-downloads]][link-downloads]
 
-Laravel 5.2 eBay Trading API Package. Easily add the eBay Tradin API capabilities to your Laravel 5.2 projects.
+Laravel 5.2 eBay Trading API Package. Easily add the eBay Trading API capabilities to your Laravel 5.2 projects.
 
 Supports PSR4 Auto loading
 
