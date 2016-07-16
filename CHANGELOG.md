@@ -7,13 +7,13 @@ Updates should follow the [Keep a CHANGELOG](http://keepachangelog.com/) princip
 ## NEXT - 2017-01-31
 
 ### Added
-- Nothing
+- eBay Trading API method getEbayOfficialTime().
 
 ### Deprecated
 - Nothing
 
 ### Fixed
-- Nothing
+- Cleaned up code.
 
 ### Removed
 - Nothing
