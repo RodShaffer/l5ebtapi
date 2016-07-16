@@ -16,10 +16,10 @@ class L5ebtapiController extends Controller
     // Declare private variables
     private $api_url = '';
     private $api_verify_ssl = true;
-    private $api_compat_lvl = '';
-    private $api_dev_name;
-    private $api_app_name;
-    private $api_cert_name;
+    private $api_compatibility_level = '';
+    private $api_dev_id;
+    private $api_app_id;
+    private $api_cert_id;
     private $api_site_id;
 
     /**
@@ -30,7 +30,7 @@ class L5ebtapiController extends Controller
     public function __construct($attributes)
     {
 
-        parent::__construct($attributes);
+        //parent::__construct();
 
         if (isset($attributes['api_url']) && empty($attributes['api_url']) || is_null($attributes['api_url'])) {
 
@@ -50,28 +50,28 @@ class L5ebtapiController extends Controller
             $this->api_verify_ssl = true;
 
         }
-        if (isset($attributes['api_compat_lvl']) && empty($attributes['api_compat_lvl']) || is_null($attributes['api_compat_lvl'])) {
+        if (isset($attributes['api_compatibility_level']) && empty($attributes['api_compatibility_level']) || is_null($attributes['api_compatibility_level'])) {
 
-            $this->api_compat_lvl = '971';
+            $this->api_compatibility_level = '971';
 
         } else {
 
-            $this->api_compat_lvl = $attributes['api_compat_lvl'];
+            $this->api_compatibility_level = $attributes['api_compatibility_level'];
 
         }
-        if (isset($attributes['api_dev_name'])) {
+        if (isset($attributes['api_dev_id'])) {
 
-            $this->api_dev_name = $attributes['api_dev_name'];
-
-        }
-        if (isset($attributes['api_app_name'])) {
-
-            $this->api_app_name = $attributes['ebay_api_app_name'];
+            $this->api_dev_id = $attributes['api_dev_id'];
 
         }
-        if (isset($attributes['api_cert_name'])) {
+        if (isset($attributes['api_app_id'])) {
 
-            $this->api_cert_name = $attributes['ebay_api_cert_name'];
+            $this->api_app_id = $attributes['api_app_id'];
+
+        }
+        if (isset($attributes['api_cert_id'])) {
+
+            $this->api_cert_id = $attributes['api_cert_id'];
 
         }
         if (isset($attributes['api_site_id']) && empty($attributes['api_site_id']) || is_null($attributes['api_site_id'])) {
