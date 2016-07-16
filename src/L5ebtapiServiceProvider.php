@@ -20,7 +20,6 @@ class L5ebtapiServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
         // use this if your package has views
         //$this->loadViewsFrom(realpath(__DIR__.'/resources/views'), 'l5ebtapi');
 
