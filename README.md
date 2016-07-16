@@ -7,24 +7,23 @@
 [![Quality Score][ico-code-quality]][link-code-quality]
 [![Total Downloads][ico-downloads]][link-downloads]
 
-**Note:** Replace ```:author_name``` ```:author_username``` ```:author_website``` ```:author_email``` ```:vendor``` ```:package_name``` ```:package_description``` with their correct values in [README.md](README.md), [CHANGELOG.md](CHANGELOG.md), [CONTRIBUTING.md](CONTRIBUTING.md), [LICENSE.md](LICENSE.md) and [composer.json](composer.json) files, then delete this line.
+Laravel 5.2 eBay Trading API Package. Easily add the eBay Tradin API capabilities to your Laravel 5.2 projects.
 
-This is where your description should go. Try and limit it to a paragraph or two, and maybe throw in a mention of what
-PSRs you support to avoid any confusion with users and contributors.
+Supports PSR4 Auto loading
 
 ## Install
 
 Via Composer
 
 ``` bash
-$ composer require :vendor/:package_name
+$ composer require l5ebtapi/l5ebtapi
 ```
 
 ## Usage
 
 ``` php
-$skeleton = new League\Skeleton();
-echo $skeleton->echoPhrase('Hello, League!');
+$l5ebtapi_service = new l5ebtapi\L5ebtapi();
+echo $l5ebtapi_service->echoPhrase('Hello, League!');
 ```
 
 ## Change log
@@ -61,10 +60,10 @@ The MIT License (MIT). Please see [License File](LICENSE.md) for more informatio
 [ico-code-quality]: https://img.shields.io/scrutinizer/g/:vendor/:package_name.svg?style=flat-square
 [ico-downloads]: https://img.shields.io/packagist/dt/:vendor/:package_name.svg?style=flat-square
 
-[link-packagist]: https://packagist.org/packages/:vendor/:package_name
-[link-travis]: https://travis-ci.org/:vendor/:package_name
-[link-scrutinizer]: https://scrutinizer-ci.com/g/:vendor/:package_name/code-structure
-[link-code-quality]: https://scrutinizer-ci.com/g/:vendor/:package_name
-[link-downloads]: https://packagist.org/packages/:vendor/:package_name
-[link-author]: https://github.com/:author_username
+[link-packagist]: https://packagist.org/packages/l5ebtapi/l5ebtapi
+[link-travis]: https://travis-ci.org/l5ebtapi/l5ebtapi
+[link-scrutinizer]: https://scrutinizer-ci.com/g/l5ebtapi/l5ebtapi/code-structure
+[link-code-quality]: https://scrutinizer-ci.com/g/l5ebtapi/l5ebtapi
+[link-downloads]: https://packagist.org/packages/l5ebtapi/l5ebtapi
+[link-author]: https://github.com/l5ebtapi
 [link-contributors]: ../../contributors
