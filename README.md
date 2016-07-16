@@ -19,8 +19,13 @@ $ composer require l5ebtapi/l5ebtapi
 ## Usage
 
 ``` php
-$l5ebtapi_service = new l5ebtapi\L5ebtapi();
-echo $l5ebtapi_service->echoPhrase('Hello, League!');
+
+use l5ebtapi\l5ebtapi\Http\Controllers\L5ebtapiController;
+
+$ebtapi_service = new L5ebtapiController($attributes);
+
+echo $ebtapi_service->getEbayOfficialTime();
+
 ```
 
 ## Change log
