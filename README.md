@@ -46,7 +46,7 @@ If you discover any security related issues, please email :author_email instead 
 
 ## Credits
 
-- [:author_name][link-author]
+- [Rod Shaffer][https://github.com/l5ebtapi/l5ebtapi]
 - [All Contributors][link-contributors]
 
 ## License
