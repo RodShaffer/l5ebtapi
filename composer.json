@@ -1,0 +1,47 @@
+{
+    "name": "l5ebtapi/l5ebtapi",
+    "type": "library",
+    "description": ":package_description",
+    "keywords": [
+        "l5ebtapi",
+        "l5ebtapi"
+    ],
+    "homepage": "https://github.com/l5ebtapi/l5ebtapi",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": ":author_name",
+            "email": ":author_email",
+            "homepage": ":author_website",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "illuminate/support": "~5.1",
+        "php" : "~5.5|~7.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit" : "~4.0||~5.0",
+        "scrutinizer/ocular": "~1.1",
+        "squizlabs/php_codesniffer": "~2.3"
+    },
+    "autoload": {
+        "psr-4": {
+            "l5ebtapi\\l5ebtapi\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "l5ebtapi\\l5ebtapi\\": "tests"
+        }
+    },
+    "scripts": {
+        "test": "phpunit",
+        "format": "phpcbf --standard=psr2 src/"
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0-dev"
+        }
+    }
+}
