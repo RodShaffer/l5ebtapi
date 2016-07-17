@@ -18,15 +18,8 @@ $ composer require l5ebtapi/l5ebtapi
 
 ## Usage
 
-``` php
-
-use l5ebtapi\l5ebtapi\Http\Controllers\L5ebtapiController;
-
-$ebtapi_service = new L5ebtapiController($attributes);
-
-echo $ebtapi_service->getEbayOfficialTime();
-
-```
+For information on usage visit our Wiki
+[link-documentation]
 
 ## Change log
 
@@ -61,4 +54,5 @@ The MIT License (MIT). Please see [License File](LICENSE.md) for more informatio
 
 [link-packagist]: https://packagist.org/packages/l5ebtapi/l5ebtapi
 [link-downloads]: https://packagist.org/packages/l5ebtapi/l5ebtapi
+[link-documentation]: https://github.com/l5ebtapi/l5ebtapi/wiki
 [link-author]: https://github.com/l5ebtapi
