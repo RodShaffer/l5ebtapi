@@ -9,7 +9,7 @@ class L5ebtapi
     private $tradingService;
 
     /**
-     * Create a new L5ebtapi Instance
+     * Create a new L5ebtapi Instance.
      */
     public function __construct()
     {
