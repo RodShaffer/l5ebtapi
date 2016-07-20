@@ -475,8 +475,8 @@ class L5ebtapiController extends Controller
                                 <PaymentMethods>' . $attributes['Item_Payment_Methods'] . '</PaymentMethods>
                                 <PayPalEmailAddress>' . $attributes['Item_Paypal_Email'] . '</PayPalEmailAddress>
                                 <PictureDetails>
-                                <GalleryType>' . $attributes['Itm_Gallery_Type'] . '</GalleryType>
-                                <PictureSource>' . $attributes['Itm_Picture_Source'] . '</PictureSource>
+                                <GalleryType>' . $attributes['Item_Gallery_Type'] . '</GalleryType>
+                                <PictureSource>' . $attributes['Item_Picture_Source'] . '</PictureSource>
                                 ';
 
         foreach ($attributes['Item_Image_Urls'] as $image_url) {
@@ -488,7 +488,7 @@ class L5ebtapiController extends Controller
         $request_body .= '
                                 </PictureDetails>
 
-                                <PostalCode>' . $attributes['Itm_Postal_Code'] . '</PostalCode>
+                                <PostalCode>' . $attributes['Item_Postal_Code'] . '</PostalCode>
 
                                 <ItemSpecifics>
                                 <NameValueList>
@@ -640,8 +640,6 @@ class L5ebtapiController extends Controller
                 $data = json_encode($xml);
 
                 return json_decode($data, TRUE);
-
-                //return (string)$xml->ItemID;
 
             }
 
