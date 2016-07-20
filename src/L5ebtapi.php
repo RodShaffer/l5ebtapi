@@ -1,8 +1,8 @@
 <?php
 
-namespace l5ebtapi\l5ebtapi;
+namespace rodshaffer\l5ebtapi;
 
-use l5ebtapi\l5ebtapi\Http\Controllers\L5ebtapiController;
+use rodshaffer\l5ebtapi\Http\Controllers\L5ebtapiController;
 
 class L5ebtapi
 {
