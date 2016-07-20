@@ -31,8 +31,13 @@ class L5ebtapiController extends Controller
      *
      * @return void
      */
-    public function __construct($attributes)
+    public function __construct()
     {
+
+    }// END constructor
+
+    public function init($attributes) {
+
         if (isset($attributes['api_url']) && strlen($attributes['api_url']) > 0) {
 
             $this->api_url = $attributes['api_url'];
@@ -101,7 +106,7 @@ class L5ebtapiController extends Controller
 
         }
 
-    }// END constructor
+    }
 
     /**
      * Method: getEbayOfficialTime() - get the eBay official time API call.
@@ -119,13 +124,13 @@ class L5ebtapiController extends Controller
                         </RequesterCredentials>
 
                         <!-- Standard Input Fields -->
-
                          <ErrorLanguage>' . $this->api_error_language . '</ErrorLanguage>
                          <Version>' . $this->api_compatibility_level . '</Version>
                          <WarningLevel>' . $this->api_warning_level . '</WarningLevel>
+
                         </GeteBayOfficialTimeRequest>​​​';
 
-        $responseXml = L5ebtapiController::request('GeteBayOfficialTime()', $request_body);
+        $responseXml = L5ebtapiController::request('GeteBayOfficialTime', $request_body);
 
         if (stristr($responseXml, 'HTTP 404')) {
 
@@ -227,11 +232,9 @@ class L5ebtapiController extends Controller
                          </RequesterCredentials>
 
                          <!-- Call-specific Input Fields -->
-
                          <DetailName>' . $detailName . '</DetailName>
 
                          <!-- Standard Input Fields -->
-
                          <ErrorLanguage>' . $this->api_error_language . '</ErrorLanguage>
                          <Version>' . $this->api_compatibility_level . '</Version>
                          <WarningLevel>' . $this->api_warning_level . '</WarningLevel>
@@ -373,7 +376,6 @@ class L5ebtapiController extends Controller
                            <PictureUploadPolicy>ClearAndAdd</PictureUploadPolicy>
 
                            <!-- Standard Input Fields -->
-
                            <ErrorLanguage>' . $this->api_error_language . '</ErrorLanguage>
                            <Version>' . $this->api_compatibility_level . '</Version>
                            <WarningLevel>' . $this->api_warning_level . '</WarningLevel>
@@ -456,7 +458,6 @@ class L5ebtapiController extends Controller
                                 </RequesterCredentials>
 
                                 <!-- Call-specific Input Fields -->
-
                                 <Item>
                                 <Title>' . $attributes['Item_Title'] . '</Title>
                                 <Description>' . $attributes['Item_Description'] . '</Description>
@@ -535,7 +536,6 @@ class L5ebtapiController extends Controller
                                 </Item>
 
                                 <!-- Standard Input Fields -->
-
                                 <ErrorLanguage>' . $this->api_error_language . '</ErrorLanguage>
                                 <Version>' . $this->api_compatibility_level . '</Version>
                                 <WarningLevel>' . $this->api_warning_level . '</WarningLevel>

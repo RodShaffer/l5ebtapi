@@ -4,7 +4,7 @@ All Notable changes to `l5ebtapi` will be documented in this file.
 
 Updates should follow the [Keep a CHANGELOG](http://keepachangelog.com/) principles.
 
-## NEXT - 2016-07-18
+## NEXT - 2016-08-01
 
 ### Added
 - Method: getEbayOfficialTime() - get the eBay official time API call.
@@ -15,7 +15,7 @@ Updates should follow the [Keep a CHANGELOG](http://keepachangelog.com/) princip
 - Nothing
 
 ### Fixed
-- Code documentation improved.
+- Nothing.
 
 ### Removed
 - Nothing

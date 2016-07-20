@@ -13,7 +13,7 @@ Supports PSR4 Auto loading
 Via Composer
 
 ``` bash
-$ composer require l5ebtapi/l5ebtapi
+$ composer require rodshaffer/l5ebtapi
 ```
 
 ## Usage
@@ -36,12 +36,11 @@ Please see [CONTRIBUTING](CONTRIBUTING.md) and [CONDUCT](CONDUCT.md) for details
 
 ## Security
 
-If you discover any security related issues, please email l5ebtapipkg@yahoo.com instead of using the issue tracker.
+If you discover any security related issues, please email htmlplus43@@yahoo.com instead of using the issue tracker.
 
 ## Credits
 
-- [Rod Shaffer][https://github.com/l5ebtapi/l5ebtapi]
-- [Rod Shaffer][https://github.com/l5ebtapi/l5ebtapi]
+- [Rod Shaffer][https://github.com/rodshaffer/l5ebtapi]
 
 ## License
 
@@ -51,7 +50,7 @@ The MIT License (MIT). Please see [License File](LICENSE.md) for more informatio
 [ico-license]: https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square
 [ico-downloads]: https://img.shields.io/packagist/dt/l5ebtapi/l5ebtapi.svg?style=flat-square
 
-[link-packagist]: https://packagist.org/packages/l5ebtapi/l5ebtapi
-[link-downloads]: https://packagist.org/packages/l5ebtapi/l5ebtapi
-[Wiki]: https://github.com/l5ebtapi/l5ebtapi/wiki
-[link-author]: https://github.com/l5ebtapi
+[link-packagist]: https://packagist.org/packages/rodshaffer/l5ebtapi
+[link-downloads]: https://packagist.org/packages/rodshaffer/l5ebtapi
+[Wiki]: https://github.com/rodshaffer/l5ebtapi/wiki
+[link-author]: https://github.com/rodshaffer/l5ebtapi
