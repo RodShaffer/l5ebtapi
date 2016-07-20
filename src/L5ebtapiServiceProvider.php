@@ -47,7 +47,7 @@ class L5ebtapiServiceProvider extends ServiceProvider
      */
     public function setupRoutes(Router $router)
     {
-        $router->group(['namespace' => 'l5ebtapi\l5ebtapi\Http\Controllers'], function($router)
+        $router->group(['namespace' => 'rodshaffer\l5ebtapi\Http\Controllers'], function($router)
         {
             require __DIR__.'/Http/routes.php';
         });
