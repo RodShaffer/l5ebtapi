@@ -9,6 +9,7 @@ Updates should follow the [Keep a CHANGELOG](http://keepachangelog.com/) princip
 ### Added
 - Method: getEbayOfficialTime() - get the eBay official time API call.
 - Method: uploadSiteHostedPictures($multiPartImageData, $image_name) - Upload an image to the eBay Picture Service.
+- Method: addFixedPriceItem(array $attributes) - Add an eBay fixed priced item listing.
 
 ### Deprecated
 - Nothing

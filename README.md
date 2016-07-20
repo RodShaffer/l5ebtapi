@@ -18,8 +18,7 @@ $ composer require l5ebtapi/l5ebtapi
 
 ## Usage
 
-For information on usage visit our Wiki
-[link-documentation]
+For information on usage visit our [Wiki]
 
 ## Change log
 
@@ -54,5 +53,5 @@ The MIT License (MIT). Please see [License File](LICENSE.md) for more informatio
 
 [link-packagist]: https://packagist.org/packages/l5ebtapi/l5ebtapi
 [link-downloads]: https://packagist.org/packages/l5ebtapi/l5ebtapi
-[link-documentation]: https://github.com/l5ebtapi/l5ebtapi/wiki
+[Wiki]: https://github.com/l5ebtapi/l5ebtapi/wiki
 [link-author]: https://github.com/l5ebtapi

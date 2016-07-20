@@ -2,26 +2,18 @@
 
 namespace l5ebtapi\l5ebtapi;
 
-class L5ebtapi
+use l5ebtapi\l5ebtapi\Http\Controllers\L5ebtapiController;
+
+class L5ebtapiClass
 {
+    private $tradingService = null;
 
     /**
      * Create a new L5ebtapi Instance
      */
     public function __construct()
     {
-        // Constructor body
+        $this->tradingService = new L5ebtapiController('');
     }
 
-    /**
-     * Friendly welcome
-     *
-     * @param string $phrase Phrase to return
-     *
-     * @return string Returns the phrase passed in
-     */
-    public function echoPhrase($phrase)
-    {
-        return $phrase;
-    }
 }

@@ -68,7 +68,7 @@ class L5ebtapiServiceProvider extends ServiceProvider
     }
     private function registerSkeleton()
     {
-        $this->app->bind('l5ebtapi',function($app){
+        $this->app->bind('L5ebtapi',function($app){
             return new L5ebtapi($app);
         });
     }
