@@ -2,7 +2,7 @@
 
 Contributions are **welcome** and will be fully **credited**.
 
-We accept contributions via Pull Requests on [Github](https://github.com/l5ebtapi/l5ebtapi).
+We accept contributions via Pull Requests on [Github](https://github.com/rodshaffer/l5ebtapi).
 
 
 ## Pull Requests
