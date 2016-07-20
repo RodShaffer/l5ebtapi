@@ -1,6 +1,6 @@
 <?php
 
-namespace l5ebtapi\l5ebtapi\Http\Controllers;
+namespace rodshaffer\l5ebtapi\Http\Controllers;
 
 //use Illuminate\Http\Request;
 

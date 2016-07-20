@@ -1,18 +1,18 @@
 {
-    "name": "l5ebtapi/l5ebtapi",
+    "name": "rodshaffer/l5ebtapi",
     "type": "library",
     "description": "Laravel 5.2 eBay Trading API Package. Easily add the eBay Trading API capabilities to your Laravel 5.2 projects.",
     "keywords": [
-        "l5ebtapi",
+        "rodshaffer",
         "l5ebtapi"
     ],
-    "homepage": "https://github.com/l5ebtapi/l5ebtapi",
+    "homepage": "https://github.com/rodshaffer/l5ebtapi",
     "license": "MIT",
     "authors": [
         {
             "name": "Rod Shaffer",
-            "email": "l5ebtapipkg@yahoo.com",
-            "homepage": "https://github.com/l5ebtapi/l5ebtapi",
+            "email": "htmlplus43@yahoo.com",
+            "homepage": "https://github.com/rodshaffer/l5ebtapi",
             "role": "Developer"
         }
     ],
@@ -27,12 +27,12 @@
     },
     "autoload": {
         "psr-4": {
-            "l5ebtapi\\l5ebtapi\\": "src"
+            "rodshaffer\\l5ebtapi\\": "src"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "l5ebtapi\\l5ebtapi\\": "tests"
+            "rodshaffer\\l5ebtapi\\": "tests"
         }
     },
     "scripts": {

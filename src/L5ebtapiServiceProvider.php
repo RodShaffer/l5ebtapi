@@ -1,6 +1,6 @@
 <?php
 
-namespace l5ebtapi\l5ebtapi;
+namespace rodshaffer\l5ebtapi;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Routing\Router;
