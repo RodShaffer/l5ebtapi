@@ -16,6 +16,10 @@ Via Composer
 $ composer require rodshaffer/l5ebtapi
 ```
 
+Then Add the following to the Application Service Providers array in your config/app.php file
+
+rodshaffer\l5ebtapi\L5ebtapiServiceProvider::class,
+
 ## Usage
 
 For information on usage visit our [Wiki]
