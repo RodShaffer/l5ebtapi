@@ -334,24 +334,7 @@ class L5ebtapiController extends Controller
 
             $xml = simplexml_load_string($responseDoc->saveXML());
 
-            if($xml->ShippingServiceDetails) {
-
-                $shipping_service_options = array();
-
-                foreach($xml->ShippingServiceDetails as $ship_option) {
-
-                    array_push($shipping_service_options, json_decode(json_encode($ship_option), TRUE));
-
-                }
-
-                return $shipping_service_options;
-
-            }
-            else {
-
-                return json_decode(json_encode($xml), TRUE);
-
-            }
+            return $xml;
 
         }
         else {
@@ -482,6 +465,9 @@ class L5ebtapiController extends Controller
                                 <StartPrice>' . $attributes['Item_Start_Price'] . '</StartPrice>
                                 <Quantity>' . $attributes['Item_Quantity'] . '</Quantity>
                                 <AutoPay>' . $attributes['Item_Auto_Pay'] . '</AutoPay>
+                                <BuyerRequirementDetails>
+                                <ShipToRegistrationCountry>' . $attributes['Ship_To_Registration_Country'] . '</ShipToRegistrationCountry>
+                                </BuyerRequirementDetails>
                                 <CategoryMappingAllowed>' . $attributes['Item_Category_Mapping_Allowed'] . '</CategoryMappingAllowed>
                                 <ConditionID>' . $attributes['Item_Condition_Id'] . '</ConditionID>
                                 <PostalCode>' . $attributes['Item_Postal_Code'] . '</PostalCode>
@@ -489,85 +475,99 @@ class L5ebtapiController extends Controller
                                 <Currency>' . $attributes['Item_Currency'] . '</Currency>
                                 <DispatchTimeMax>' . $attributes['Item_Dispatch_Time_Max'] . '</DispatchTimeMax>
                                 <ListingDuration>' . $attributes['Item_Listing_Duration'] . '</ListingDuration>
-                                <ListingType>' . $attributes['Item_Listing_Type'] . '</ListingType>';
+                                <ListingType>' . $attributes['Item_Listing_Type'] . '</ListingType>
+                                ';
 
 
             foreach ($attributes['Item_Payment_Methods'] as $payment_method) {
 
                 if ($payment_method == 'VisaMC' && $attributes['Item_Auto_Pay'] == 'false') {
 
-                    $request_body .= '<PaymentMethods>' . $payment_method . '</PaymentMethods>';
+                    $request_body .= '<PaymentMethods>' . $payment_method . '</PaymentMethods>
+                    ';
 
                 }
                 if ($payment_method == 'Discover' && $attributes['Item_Auto_Pay'] == 'false') {
 
-                    $request_body .= '<PaymentMethods>' . $payment_method . '</PaymentMethods>';
+                    $request_body .= '<PaymentMethods>' . $payment_method . '</PaymentMethods>
+                    ';
 
                 }
                 if ($payment_method == 'AmEx' && $attributes['Item_Auto_Pay'] == 'false') {
 
-                    $request_body .= '<PaymentMethods>' . $payment_method . '</PaymentMethods>';
+                    $request_body .= '<PaymentMethods>' . $payment_method . '</PaymentMethods>
+                    ';
 
                 }
                 if ($payment_method == 'PayPal') {
 
                     $request_body .= '<PaymentMethods>' . $payment_method . '</PaymentMethods>
-                                <PayPalEmailAddress>' . $attributes['PayPal_Email_Address'] . '</PayPalEmailAddress>';
+                                <PayPalEmailAddress>' . $attributes['PayPal_Email_Address'] . '</PayPalEmailAddress>
+                                ';
                 }
 
             }
 
         $request_body .= '<PictureDetails>
                         <GalleryType>' . $attributes['Item_Gallery_Type'] . '</GalleryType>
-                        <PictureSource>' . $attributes['Item_Picture_Source'] . '</PictureSource>';
+                        <PictureSource>' . $attributes['Item_Picture_Source'] . '</PictureSource>
+                        ';
 
         foreach ($attributes['Item_Image_Urls'] as $image_url) {
 
-            $request_body .= '<PictureURL>' . $image_url . '</PictureURL>';
+            $request_body .= '<PictureURL>' . $image_url . '</PictureURL>
+            ';
 
         }
 
         $request_body .= '
-                                </PictureDetails>';
+                                </PictureDetails>
+                                ';
 
         if($attributes['Item_Specifics'] && count($attributes['Item_Specifics']) > 0) {
 
-            $request_body .= '<ItemSpecifics>';
+            $request_body .= '<ItemSpecifics>
+                              ';
 
             if(array_key_exists('Brand', $attributes['Item_Specifics'])) {
 
                 $request_body .= '<NameValueList>
                                 <Name>Brand</Name>
                                 <Value>' . $attributes['Item_Specifics']['Brand'] . '</Value>
-                                </NameValueList>';
+                                </NameValueList>
+                                ';
             }
             if(array_key_exists('Mpn', $attributes['Item_Specifics'])) {
 
                 $request_body .= '<NameValueList>
                                 <Name>Mpn</Name>
                                 <Value>' . $attributes['Item_Specifics']['Mpn'] . '</Value>
-                                </NameValueList>';
+                                </NameValueList>
+                                ';
             }
             if(array_key_exists('Color', $attributes['Item_Specifics'])) {
 
                 $request_body .= '<NameValueList>
                                 <Name>Color</Name>
                                 <Value>' . $attributes['Item_Specifics']['Color'] . '</Value>
-                                </NameValueList>';
+                                </NameValueList>
+                                ';
             }
             if(array_key_exists('Model', $attributes['Item_Specifics'])) {
 
                 $request_body .= '<NameValueList>
                                 <Name>Model</Name>
                                 <Value>' . $attributes['Item_Specifics']['Model'] . '</Value>
-                                </NameValueList>';
+                                </NameValueList>
+                                ';
             }
 
-            $request_body .= '</ItemSpecifics>';
+            $request_body .= '</ItemSpecifics>
+                              ';
 
         }
 
-        if(isset($attributes['RetPol_Returns_Accepted']) && $attributes['RetPol_Returns_Accepted'] == 'true') {
+        if(isset($attributes['RetPol_Returns_Accepted']) && $attributes['RetPol_Returns_Accepted'] == 'ReturnsAccepted') {
 
             $request_body .= '<ReturnPolicy>
                             <ReturnsAcceptedOption>' . $attributes['RetPol_Returns_Accepted'] . '</ReturnsAcceptedOption>
@@ -575,24 +575,40 @@ class L5ebtapiController extends Controller
                             <ReturnsWithinOption>' . $attributes['RetPol_Returns_Within'] . '</ReturnsWithinOption>
                             <Description>' . $attributes['RetPol_Description'] . '</Description>
                             <ShippingCostPaidByOption>' . $attributes['RetPol_Shipping_Cost_Paid_By'] . '</ShippingCostPaidByOption>
-                            </ReturnPolicy>';
+                            </ReturnPolicy>
+                            ';
 
         }
         else {
 
-            if(isset($attributes['RetPol_Returns_Accepted']) && $attributes['RetPol_Returns_Accepted'] == 'false') {
+            if(isset($attributes['RetPol_Returns_Accepted']) && $attributes['RetPol_Returns_Accepted'] == false) {
 
                 $request_body .= '<ReturnPolicy>
                             <ReturnsAcceptedOption>' . $attributes['RetPol_Returns_Accepted'] . '</ReturnsAcceptedOption>
-                            </ReturnPolicy>';
+                            </ReturnPolicy>
+                            ';
 
             }
 
         }
 
         $request_body .= '<ShippingDetails>
+                          ';
 
-                                <ShippingType>' . $attributes['Shipping_Details_Shipping_Type'] . '</ShippingType>
+        if(isset($attributes['Exclude_Ship_To_Locations'])) {
+
+            $excluded_ship_locations = $attributes['Exclude_Ship_To_Locations'];
+
+            foreach($excluded_ship_locations as $excluded_location) {
+
+                $request_body .= '<ExcludeShipToLocation>' . $excluded_location . '</ExcludeShipToLocation>
+                ';
+
+            }
+
+        }
+
+        $request_body .= '<ShippingType>' . $attributes['Shipping_Details_Shipping_Type'] . '</ShippingType>
 
                                 <ShippingServiceOptions>
                                 <ShippingServicePriority>' . $attributes['Shipping_Details_Shipping_Service_Priority'] . '</ShippingServicePriority>
@@ -600,14 +616,23 @@ class L5ebtapiController extends Controller
                                 <FreeShipping>' . $attributes['Shipping_Details_Free_Shipping'] . '</FreeShipping>
                                 <ShippingServiceAdditionalCost currencyID="' . $attributes['Shipping_Details_Currency_Id'] . '">' . $attributes['Shipping_Details_Additional_Cost'] . '</ShippingServiceAdditionalCost>
                                 </ShippingServiceOptions>
-
-                                <ExcludeShipToLocation>Africa</ExcludeShipToLocation>
-
-                                <!-- ... more ExcludeShipToLocation values allowed here ... -->
-
                                 </ShippingDetails>
+                                ';
 
-                                <Site>' . $attributes['Item_Site'] . '</Site>
+        if(isset($attributes['Ship_To_Locations'])) {
+
+            $ship_to_locations = $attributes['Ship_To_Locations'];
+
+            foreach($ship_to_locations as $ship_to_location) {
+
+                $request_body .= '<ShipToLocations>' . $ship_to_location . '</ShipToLocations>
+                ';
+
+            }
+
+        }
+
+        $request_body .= '<Site>' . $attributes['Item_Site'] . '</Site>
                                 </Item>
 
                                 <!-- Standard Input Fields -->
@@ -616,7 +641,7 @@ class L5ebtapiController extends Controller
                                 <WarningLevel>' . $this->api_warning_level . '</WarningLevel>
                                 </AddFixedPriceItemRequest>';
 
-        dd($request_body);
+        //dd($request_body);
 
         $responseXml = L5ebtapiController::request('AddFixedPriceItem', $request_body);
 

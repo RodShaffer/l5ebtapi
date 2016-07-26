@@ -10,17 +10,18 @@ Updates should follow the [Keep a CHANGELOG](http://keepachangelog.com/) princip
 - Method: getEbayOfficialTime() - get the eBay official time API call.
 - Method: getEbayDetails($detailName) - Get various eBay metadata. Example. get the eBay shipping service options.
 - Method: uploadSiteHostedPictures($multiPartImageData, $image_name) - Upload an image to the eBay Picture Service.
-- Method: addFixedPriceItem(array $attributes) - Add an eBay fixed priced item listing. Method works but is not complete. Does not support all the options.
+- Method: addFixedPriceItem(array $attributes) - Add an eBay fixed priced item listing. Method works but is not complete.
+ Does not support all the options. I have tested this method using Flat rate shipping (No international shipping support
+ at this time) I have not tested with Calculated shipping. Not all options supported at this time. I have an example on
+ the Wiki which will show what is supported at this time.
 
 ### Deprecated
 - Nothing.
 
 ### Fixed
-- Fixed the Wiki documentation. Brought it up to date and also posted examples.
-- Please note: The addFixedPriceItem API method is not complete and does not work fully. Some of the options are not
-- currently supported like the sipping options for example. See my example on the Wiki as this will show you what is
-- currently supported.
-
+- Changed the return type for getEbayDetails($detailName) from array to simpleXml due to some data loss when converting
+ to an array.
+ 
 ### Removed
 - Testing section. No testing setup at this time.
 
