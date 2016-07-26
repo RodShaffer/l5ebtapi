@@ -524,40 +524,41 @@ class L5ebtapiController extends Controller
                                 </PictureDetails>
                                 ';
 
-        if($attributes['Item_Specifics'] && count($attributes['Item_Specifics']) > 0) {
+        if($attributes['Item_Specifics_Brand'] || $attributes['Item_Specifics_Mpn'] ||
+            $attributes['Item_Specifics_Color'] || $attributes['Item_Specifics_Model']) {
 
             $request_body .= '<ItemSpecifics>
                               ';
 
-            if(array_key_exists('Brand', $attributes['Item_Specifics'])) {
+            if(isset($attributes['Item_Specifics_Brand'])) {
 
                 $request_body .= '<NameValueList>
                                 <Name>Brand</Name>
-                                <Value>' . $attributes['Item_Specifics']['Brand'] . '</Value>
+                                <Value>' . $attributes['Item_Specifics_Brand'] . '</Value>
                                 </NameValueList>
                                 ';
             }
-            if(array_key_exists('Mpn', $attributes['Item_Specifics'])) {
+            if(isset($attributes['Item_Specifics_Mpn'])) {
 
                 $request_body .= '<NameValueList>
-                                <Name>Mpn</Name>
-                                <Value>' . $attributes['Item_Specifics']['Mpn'] . '</Value>
+                                <Name>MPN</Name>
+                                <Value>' . $attributes['Item_Specifics_Mpn'] . '</Value>
                                 </NameValueList>
                                 ';
             }
-            if(array_key_exists('Color', $attributes['Item_Specifics'])) {
+            if(isset($attributes['Item_Specifics_Color'])) {
 
                 $request_body .= '<NameValueList>
                                 <Name>Color</Name>
-                                <Value>' . $attributes['Item_Specifics']['Color'] . '</Value>
+                                <Value>' . $attributes['Item_Specifics_Color'] . '</Value>
                                 </NameValueList>
                                 ';
             }
-            if(array_key_exists('Model', $attributes['Item_Specifics'])) {
+            if(isset($attributes['Item_Specifics_Model'])) {
 
                 $request_body .= '<NameValueList>
                                 <Name>Model</Name>
-                                <Value>' . $attributes['Item_Specifics']['Model'] . '</Value>
+                                <Value>' . $attributes['Item_Specifics_Model'] . '</Value>
                                 </NameValueList>
                                 ';
             }
