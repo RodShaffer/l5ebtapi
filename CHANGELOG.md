@@ -14,6 +14,7 @@ Updates should follow the [Keep a CHANGELOG](http://keepachangelog.com/) princip
  Does not support all the options. I have tested this method using Flat rate shipping (No international shipping support
  at this time) I have not tested with Calculated shipping. Not all options supported at this time. I have an example on
  the Wiki which will show what is supported at this time.
+- Method: getItem($item_id) - Retrieves the eBay item detail for the given eBay item id.
 
 ### Deprecated
 - Nothing.

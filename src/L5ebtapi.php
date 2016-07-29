@@ -37,6 +37,13 @@ class L5ebtapi
 
     }
 
+    public function getItem($item_id)
+    {
+
+        return $this->tradingService->getItem($item_id);
+
+    }
+
     public function uploadSiteHostedPictures($multiPartImageData, $imageName)
     {
 
