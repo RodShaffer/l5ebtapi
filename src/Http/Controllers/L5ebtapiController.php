@@ -595,7 +595,7 @@ class L5ebtapiController extends Controller
                                 <Quantity>' . $attributes['Item_Quantity'] . '</Quantity>
                                 <AutoPay>' . $attributes['Item_Auto_Pay'] . '</AutoPay>
                                 <BuyerRequirementDetails>
-                                <ShipToRegistrationCountry>' . $attributes['Ship_To_Registration_Country'] . '</ShipToRegistrationCountry>
+                                <ShipToRegistrationCountry>' . $attributes['Shipping_Options'][0]['Ship_To_Registration_Country'] . '</ShipToRegistrationCountry>
                                 </BuyerRequirementDetails>
                                 <CategoryMappingAllowed>' . $attributes['Item_Category_Mapping_Allowed'] . '</CategoryMappingAllowed>
                                 <ConditionID>' . $attributes['Item_Condition_Id'] . '</ConditionID>
@@ -734,7 +734,7 @@ class L5ebtapiController extends Controller
         $request_body .= '<ShippingDetails>
                           ';
 
-        $request_body .= '<ShippingType>' . $attributes['Shipping_Details_Shipping_Type'] . '</ShippingType>
+        $request_body .= '<ShippingType>' . $attributes['Shipping_Options'][0]['Shipping_Type'] . '</ShippingType>
         ';
 
         if(isset($attributes['Exclude_Ship_To_Locations'])) {
@@ -750,19 +750,47 @@ class L5ebtapiController extends Controller
 
         }
         
-        if(isset($attributes['Shipping_Service_Options'])) {
+        if(isset($attributes['Shipping_Options'])) {
 
-            $shipping_service_options = $attributes['Shipping_Service_Options'];
+            $shipping_options = $attributes['Shipping_Options'];
 
-            for ($i = 0; $i < count($shipping_service_options); $i++) {
+            for ($i = 0; $i < count($shipping_options); $i++) {
 
-                $request_body .= '<ShippingServiceOptions>
-                                  <ShippingServicePriority>' . $shipping_service_options[$i]['Shipping_Service_Priority'] . '</ShippingServicePriority>
-                                  <ShippingService>' . $shipping_service_options[$i]['Shipping_Service'] . '</ShippingService>
-                                  <FreeShipping>' . $shipping_service_options[$i]['Free_Shipping'] . '</FreeShipping>
-                                  <ShippingServiceCost currencyID="' . $shipping_service_options[$i]['Currency_ID'] . '">' . $shipping_service_options[$i]['Additional_Cost'] . '</ShippingServiceCost>
+                if($i == 0) {
+
+                    if($shipping_options[$i]['Free_Shipping']) {
+
+                        $request_body .= '<ShippingServiceOptions>
+                                  <ShippingServicePriority>' . $shipping_options[$i]['Shipping_Service_Priority'] . '</ShippingServicePriority>
+                                  <ShippingService>' . $shipping_options[$i]['Shipping_Service'] . '</ShippingService>
+                                  <FreeShipping>' . $shipping_options[$i]['Free_Shipping'] . '</FreeShipping>
                                   </ShippingServiceOptions>
                                   ';
+
+                    }
+                    else {
+
+                        $request_body .= '<ShippingServiceOptions>
+                                  <ShippingServicePriority>' . $shipping_options[$i]['Shipping_Service_Priority'] . '</ShippingServicePriority>
+                                  <ShippingService>' . $shipping_options[$i]['Shipping_Service'] . '</ShippingService>
+                                  <FreeShipping>' . $shipping_options[$i]['Free_Shipping'] . '</FreeShipping>
+                                  <ShippingServiceCost currencyID="' . $shipping_options[$i]['Currency_Id'] . '">' . $shipping_options[$i]['Shipping_Cost'] . '</ShippingServiceCost>
+                                  </ShippingServiceOptions>
+                                  ';
+
+                    }
+
+                }
+                else {
+
+                    $request_body .= '<ShippingServiceOptions>
+                                  <ShippingServicePriority>' . $shipping_options[$i]['Shipping_Service_Priority'] . '</ShippingServicePriority>
+                                  <ShippingService>' . $shipping_options[$i]['Shipping_Service'] . '</ShippingService>
+                                  <ShippingServiceCost currencyID="' . $shipping_options[$i]['Currency_Id'] . '">' . $shipping_options[$i]['Shipping_Cost'] . '</ShippingServiceCost>
+                                  </ShippingServiceOptions>
+                                  ';
+
+                }
 
             }
 
@@ -785,13 +813,15 @@ class L5ebtapiController extends Controller
         }
 
         $request_body .= '<Site>' . $attributes['Item_Site'] . '</Site>
-                                </Item>
+                        </Item>
 
-                                <!-- Standard Input Fields -->
-                                <ErrorLanguage>' . $this->api_error_language . '</ErrorLanguage>
-                                <Version>' . $this->api_compatibility_level . '</Version>
-                                <WarningLevel>' . $this->api_warning_level . '</WarningLevel>
-                                </AddFixedPriceItemRequest>';
+                        <!-- Standard Input Fields -->
+                        <ErrorLanguage>' . $this->api_error_language . '</ErrorLanguage>
+                        <Version>' . $this->api_compatibility_level . '</Version>
+                        <WarningLevel>' . $this->api_warning_level . '</WarningLevel>
+                        </AddFixedPriceItemRequest>';
+        
+        //dd($request_body);
 
         $responseXml = L5ebtapiController::request('AddFixedPriceItem', $request_body);
 
