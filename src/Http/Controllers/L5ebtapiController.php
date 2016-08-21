@@ -653,12 +653,21 @@ class L5ebtapiController extends Controller
                                 </PictureDetails>
                                 ';
 
-        if($attributes['Item_Specifics_Brand'] || $attributes['Item_Specifics_Mpn'] ||
-            $attributes['Item_Specifics_Color'] || $attributes['Item_Specifics_Model']) {
+        if($attributes['Item_Specifics_UPC'] || $attributes['Item_Specifics_Brand'] ||
+            $attributes['Item_Specifics_Mpn'] || $attributes['Item_Specifics_Color'] ||
+            $attributes['Item_Specifics_Model']) {
 
             $request_body .= '<ItemSpecifics>
                               ';
 
+            if(isset($attributes['Item_Specifics_UPC'])) {
+
+                $request_body .= '<NameValueList>
+                                <Name>UPC</Name>
+                                <Value>' . $attributes['Item_Specifics_UPC'] . '</Value>
+                                </NameValueList>
+                                ';
+            }
             if(isset($attributes['Item_Specifics_Brand'])) {
 
                 $request_body .= '<NameValueList>
@@ -725,6 +734,9 @@ class L5ebtapiController extends Controller
         $request_body .= '<ShippingDetails>
                           ';
 
+        $request_body .= '<ShippingType>' . $attributes['Shipping_Details_Shipping_Type'] . '</ShippingType>
+        ';
+
         if(isset($attributes['Exclude_Ship_To_Locations'])) {
 
             $excluded_ship_locations = $attributes['Exclude_Ship_To_Locations'];
@@ -737,17 +749,27 @@ class L5ebtapiController extends Controller
             }
 
         }
+        
+        if(isset($attributes['Shipping_Service_Options'])) {
 
-        $request_body .= '<ShippingType>' . $attributes['Shipping_Details_Shipping_Type'] . '</ShippingType>
+            $shipping_service_options = $attributes['Shipping_Service_Options'];
 
-                                <ShippingServiceOptions>
-                                <ShippingServicePriority>' . $attributes['Shipping_Details_Shipping_Service_Priority'] . '</ShippingServicePriority>
-                                <ShippingService>' . $attributes['Shipping_Details_Shipping_Service'] . '</ShippingService>
-                                <FreeShipping>' . $attributes['Shipping_Details_Free_Shipping'] . '</FreeShipping>
-                                <ShippingServiceAdditionalCost currencyID="' . $attributes['Shipping_Details_Currency_Id'] . '">' . $attributes['Shipping_Details_Additional_Cost'] . '</ShippingServiceAdditionalCost>
-                                </ShippingServiceOptions>
-                                </ShippingDetails>
-                                ';
+            for ($i = 0; $i < count($shipping_service_options); $i++) {
+
+                $request_body .= '<ShippingServiceOptions>
+                                  <ShippingServicePriority>' . $shipping_service_options[$i]['Shipping_Service_Priority'] . '</ShippingServicePriority>
+                                  <ShippingService>' . $shipping_service_options[$i]['Shipping_Service'] . '</ShippingService>
+                                  <FreeShipping>' . $shipping_service_options[$i]['Free_Shipping'] . '</FreeShipping>
+                                  <ShippingServiceCost currencyID="' . $shipping_service_options[$i]['Currency_ID'] . '">' . $shipping_service_options[$i]['Additional_Cost'] . '</ShippingServiceCost>
+                                  </ShippingServiceOptions>
+                                  ';
+
+            }
+
+        }
+
+        $request_body .= '</ShippingDetails>
+                          ';
 
         if(isset($attributes['Ship_To_Locations'])) {
 
