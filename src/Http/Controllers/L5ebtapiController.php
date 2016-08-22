@@ -706,27 +706,29 @@ class L5ebtapiController extends Controller
 
         }
 
-        if(isset($attributes['RetPol_Returns_Accepted']) && $attributes['RetPol_Returns_Accepted'] == 'ReturnsAccepted') {
+        if(isset($attributes['Return_Options'])) {
 
-            $request_body .= '<ReturnPolicy>
-                            <ReturnsAcceptedOption>' . $attributes['RetPol_Returns_Accepted'] . '</ReturnsAcceptedOption>
-                            <RefundOption>' . $attributes['RetPol_Refund_Option'] . '</RefundOption>
-                            <ReturnsWithinOption>' . $attributes['RetPol_Returns_Within'] . '</ReturnsWithinOption>
-                            <Description>' . $attributes['RetPol_Description'] . '</Description>
-                            <ShippingCostPaidByOption>' . $attributes['RetPol_Shipping_Cost_Paid_By'] . '</ShippingCostPaidByOption>
-                            </ReturnPolicy>
-                            ';
+            $return_options = $attributes['Return_Options'];
 
-        }
-        else {
-
-            if(isset($attributes['RetPol_Returns_Accepted']) && $attributes['RetPol_Returns_Accepted'] == false) {
+            if(isset($return_options[0]['Return_Accepted']) && $return_options[0]['Return_Accepted'] == 'ReturnsAccepted') {
 
                 $request_body .= '<ReturnPolicy>
-                            <ReturnsAcceptedOption>' . $attributes['RetPol_Returns_Accepted'] . '</ReturnsAcceptedOption>
+                            <ReturnsAcceptedOption>' . $return_options[0]['Return_Accepted'] . '</ReturnsAcceptedOption>
+                            <RefundOption>' . $return_options[0]['Return_Option'] . '</RefundOption>
+                            <ReturnsWithinOption>' . $return_options[0]['Return_Within'] . '</ReturnsWithinOption>
+                            <Description>' . $return_options[0]['Return_Description'] . '</Description>
+                            <ShippingCostPaidByOption>' . $return_options[0]['Return_Shipping_Cost_Paid_By'] . '</ShippingCostPaidByOption>
                             </ReturnPolicy>
                             ';
 
+            }
+            else {
+
+                $request_body .= '<ReturnPolicy>
+                            <ReturnsAcceptedOption>' . $return_options[0]['Return_Accepted'] . '</ReturnsAcceptedOption>
+                            </ReturnPolicy>
+                            ';
+                
             }
 
         }
