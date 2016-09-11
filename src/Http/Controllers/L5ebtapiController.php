@@ -554,49 +554,49 @@ class L5ebtapiController extends Controller
                         /* Call-specific Input Fields */
                         if(isset($attributes['IncludeItemCompatibilityList'])) {
 
-                            $request_body .= '<IncludeItemCompatibilityList>' . $attributes['IncludeItemCompatibilityList'] . ' </IncludeItemCompatibilityList>
+                            $request_body .= '<IncludeItemCompatibilityList>' . $attributes['IncludeItemCompatibilityList'] . '</IncludeItemCompatibilityList>
                             ';
 
                         }
                         if(isset($attributes['IncludeItemSpecifics'])) {
 
-                            $request_body .= '<IncludeItemSpecifics>' . $attributes['IncludeItemSpecifics'] . ' </IncludeItemSpecifics>
+                            $request_body .= '<IncludeItemSpecifics>' . $attributes['IncludeItemSpecifics'] . '</IncludeItemSpecifics>
                             ';
 
                         }
                         if(isset($attributes['IncludeTaxTable'])) {
 
-                            $request_body .= '<IncludeTaxTable>' . $attributes['IncludeTaxTable'] . ' </IncludeTaxTable>
+                            $request_body .= '<IncludeTaxTable>' . $attributes['IncludeTaxTable'] . '</IncludeTaxTable>
                             ';
 
                         }
                         if(isset($attributes['IncludeWatchCount'])) {
 
-                            $request_body .= '<IncludeWatchCount>' . $attributes['IncludeWatchCount'] . ' </IncludeWatchCount>
+                            $request_body .= '<IncludeWatchCount>' . $attributes['IncludeWatchCount'] . '</IncludeWatchCount>
                             ';
 
                         }
                         if(isset($attributes['ItemID'])) {
 
-                            $request_body .= '<ItemID>' . $attributes['ItemID'] . ' </ItemID>
+                            $request_body .= '<ItemID>' . $attributes['ItemID'] . '</ItemID>
                             ';
 
                         }
                         if(isset($attributes['SKU'])) {
 
-                            $request_body .= '<SKU>' . $attributes['SKU'] . ' </SKU>
+                            $request_body .= '<SKU>' . $attributes['SKU'] . '</SKU>
                             ';
 
                         }
                         if(isset($attributes['TransactionID'])) {
 
-                            $request_body .= '<TransactionID>' . $attributes['TransactionID'] . ' </TransactionID>
+                            $request_body .= '<TransactionID>' . $attributes['TransactionID'] . '</TransactionID>
                             ';
 
                         }
                         if(isset($attributes['VariationSKU'])) {
 
-                            $request_body .= '<VariationSKU>' . $attributes['VariationSKU'] . ' </VariationSKU>
+                            $request_body .= '<VariationSKU>' . $attributes['VariationSKU'] . '</VariationSKU>
                             ';
 
                         }
@@ -625,7 +625,7 @@ class L5ebtapiController extends Controller
                         /* Standard Input Fields */
                         if(isset($attributes['DetailLevel'])) {
 
-                            $request_body .= '<DetailLevel>' . $attributes['DetailLevel'] . ' </DetailLevel>
+                            $request_body .= '<DetailLevel>' . $attributes['DetailLevel'] . '</DetailLevel>
                             ';
 
                         }
