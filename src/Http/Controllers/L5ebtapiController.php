@@ -36,7 +36,8 @@ class L5ebtapiController extends Controller
 
     }// END constructor
 
-    public function init($attributes) {
+    public function init($attributes)
+    {
 
         if (isset($attributes['api_url']) && strlen($attributes['api_url']) > 0) {
 
@@ -146,7 +147,7 @@ class L5ebtapiController extends Controller
                 'the XML response is an empty string');
 
             return ['Error:' => 'The XML response is an empty string. Please verify all eBay API settings are correct' .
-            'and try again.'];
+                'and try again.'];
 
         }
 
@@ -336,8 +337,7 @@ class L5ebtapiController extends Controller
 
             return $xml;
 
-        }
-        else {
+        } else {
 
             Log::error('eBay API Call: getEbayDetails(): An error occurred during the getEbayDetails() ebay API' .
                 'call. Please verify all API settings are correct and then try the request again.');
@@ -465,8 +465,7 @@ class L5ebtapiController extends Controller
 
             return $xml;
 
-        }
-        else {
+        } else {
 
             Log::error('eBay API Call: getItem($item_id): An error occurred during the getItem($item_id) ebay API' .
                 'call. Please verify all API settings are correct and then try the request again.');
@@ -547,7 +546,7 @@ class L5ebtapiController extends Controller
                 'the XML response is an empty string');
 
             return ['Error:' => 'The XML response is an empty string. Please verify all eBay API settings are correct' .
-            'and try the request again.'];
+                'and try the request again.'];
 
         }
 
@@ -608,34 +607,34 @@ class L5ebtapiController extends Controller
                                 ';
 
 
-            foreach ($attributes['Item_Payment_Methods'] as $payment_method) {
+        foreach ($attributes['Item_Payment_Methods'] as $payment_method) {
 
-                if ($payment_method == 'VisaMC' && $attributes['Item_Auto_Pay'] == 'false') {
+            if ($payment_method == 'VisaMC' && $attributes['Item_Auto_Pay'] == 'false') {
 
-                    $request_body .= '<PaymentMethods>' . $payment_method . '</PaymentMethods>
+                $request_body .= '<PaymentMethods>' . $payment_method . '</PaymentMethods>
                     ';
-
-                }
-                if ($payment_method == 'Discover' && $attributes['Item_Auto_Pay'] == 'false') {
-
-                    $request_body .= '<PaymentMethods>' . $payment_method . '</PaymentMethods>
-                    ';
-
-                }
-                if ($payment_method == 'AmEx' && $attributes['Item_Auto_Pay'] == 'false') {
-
-                    $request_body .= '<PaymentMethods>' . $payment_method . '</PaymentMethods>
-                    ';
-
-                }
-                if ($payment_method == 'PayPal') {
-
-                    $request_body .= '<PaymentMethods>' . $payment_method . '</PaymentMethods>
-                                <PayPalEmailAddress>' . $attributes['PayPal_Email_Address'] . '</PayPalEmailAddress>
-                                ';
-                }
 
             }
+            if ($payment_method == 'Discover' && $attributes['Item_Auto_Pay'] == 'false') {
+
+                $request_body .= '<PaymentMethods>' . $payment_method . '</PaymentMethods>
+                    ';
+
+            }
+            if ($payment_method == 'AmEx' && $attributes['Item_Auto_Pay'] == 'false') {
+
+                $request_body .= '<PaymentMethods>' . $payment_method . '</PaymentMethods>
+                    ';
+
+            }
+            if ($payment_method == 'PayPal') {
+
+                $request_body .= '<PaymentMethods>' . $payment_method . '</PaymentMethods>
+                                <PayPalEmailAddress>' . $attributes['PayPal_Email_Address'] . '</PayPalEmailAddress>
+                                ';
+            }
+
+        }
 
         $request_body .= '<PictureDetails>
                         <GalleryType>' . $attributes['Item_Gallery_Type'] . '</GalleryType>
@@ -649,56 +648,22 @@ class L5ebtapiController extends Controller
 
         }
 
-        $request_body .= '
-                                </PictureDetails>
-                                ';
+        $request_body .= '</PictureDetails>
+        ';
 
-        if($attributes['Item_Specifics_UPC'] || $attributes['Item_Specifics_Brand'] ||
-            $attributes['Item_Specifics_Mpn'] || $attributes['Item_Specifics_Color'] ||
-            $attributes['Item_Specifics_Model']) {
+        if (isset($attributes['Item_Specifics'])) {
 
             $request_body .= '<ItemSpecifics>
                               ';
-
-            if(isset($attributes['Item_Specifics_UPC'])) {
-
-                $request_body .= '<NameValueList>
-                                <Name>UPC</Name>
-                                <Value>' . $attributes['Item_Specifics_UPC'] . '</Value>
-                                </NameValueList>
-                                ';
-            }
-            if(isset($attributes['Item_Specifics_Brand'])) {
+            
+            foreach ($attributes['Item_Specifics'] as $item_specific) {
 
                 $request_body .= '<NameValueList>
-                                <Name>Brand</Name>
-                                <Value>' . $attributes['Item_Specifics_Brand'] . '</Value>
+                                <Name>' . $item_specific['Name'] . '</Name>
+                                <Value>' . $item_specific['Value'] . '</Value>
                                 </NameValueList>
                                 ';
-            }
-            if(isset($attributes['Item_Specifics_Mpn'])) {
-
-                $request_body .= '<NameValueList>
-                                <Name>MPN</Name>
-                                <Value>' . $attributes['Item_Specifics_Mpn'] . '</Value>
-                                </NameValueList>
-                                ';
-            }
-            if(isset($attributes['Item_Specifics_Color'])) {
-
-                $request_body .= '<NameValueList>
-                                <Name>Color</Name>
-                                <Value>' . $attributes['Item_Specifics_Color'] . '</Value>
-                                </NameValueList>
-                                ';
-            }
-            if(isset($attributes['Item_Specifics_Model'])) {
-
-                $request_body .= '<NameValueList>
-                                <Name>Model</Name>
-                                <Value>' . $attributes['Item_Specifics_Model'] . '</Value>
-                                </NameValueList>
-                                ';
+                
             }
 
             $request_body .= '</ItemSpecifics>
@@ -706,30 +671,82 @@ class L5ebtapiController extends Controller
 
         }
 
-        if(isset($attributes['Return_Options'])) {
+        if (isset($attributes['Return_Options'])) {
 
             $return_options = $attributes['Return_Options'];
 
-            if(isset($return_options[0]['Return_Accepted']) && $return_options[0]['Return_Accepted'] == 'ReturnsAccepted') {
+            $request_body .= '<ReturnPolicy>
+            ';
 
-                $request_body .= '<ReturnPolicy>
-                            <ReturnsAcceptedOption>' . $return_options[0]['Return_Accepted'] . '</ReturnsAcceptedOption>
-                            <RefundOption>' . $return_options[0]['Return_Option'] . '</RefundOption>
-                            <ReturnsWithinOption>' . $return_options[0]['Return_Within'] . '</ReturnsWithinOption>
-                            <Description>' . $return_options[0]['Return_Description'] . '</Description>
-                            <ShippingCostPaidByOption>' . $return_options[0]['Return_Shipping_Cost_Paid_By'] . '</ShippingCostPaidByOption>
-                            </ReturnPolicy>
-                            ';
+            if(isset($return_options[0]['Description'])) {
+
+                $request_body .= '<Description>' . $return_options[0]['Description'] . '</Description>
+                ';
 
             }
-            else {
+            if(isset($return_options[0]['EAN'])) {
 
-                $request_body .= '<ReturnPolicy>
-                            <ReturnsAcceptedOption>' . $return_options[0]['Return_Accepted'] . '</ReturnsAcceptedOption>
-                            </ReturnPolicy>
-                            ';
-                
+                $request_body .= '<EAN>' . $return_options[0]['EAN'] . '</EAN>
+                ';
+
             }
+            if(isset($return_options[0]['Extended_Holiday_Returns'])) {
+
+                $request_body .= '<ExtendedHolidayReturns>' . $return_options[0]['Extended_Holiday_Returns'] . '</ExtendedHolidayReturns>
+                ';
+
+            }
+            if (isset($return_options[0]['Refund_Option'])) {
+
+                $request_body .= '<RefundOption>' . $return_options[0]['Refund_Option'] . '</RefundOption>
+                ';
+
+            }
+            if (isset($return_options[0]['Restocking_Fee_Value_Option'])) {
+
+                $request_body .= '<RestockingFeeValue>' . $return_options[0]['Restocking_Fee_Value_Option'] . '</RestockingFeeValue>
+                ';
+
+            }
+            if (isset($return_options[0]['Returns_Accepted_Option'])) {
+
+                $request_body .= '<ReturnsAcceptedOption>' . $return_options[0]['Returns_Accepted_Option'] . '</ReturnsAcceptedOption>
+                ';
+
+            }
+            if (isset($return_options[0]['Returns_Within_Option'])) {
+
+                $request_body .= '<ReturnsWithinOption>' . $return_options[0]['Returns_Within_Option'] . '</ReturnsWithinOption>
+                ';
+
+            }
+            if(isset($return_options[0]['Shipping_Cost_Paid_By_Option'])) {
+
+                $request_body .= '<ShippingCostPaidByOption>' . $return_options[0]['Shipping_Cost_Paid_By_Option'] . '</ShippingCostPaidByOption>
+                ';
+
+            }
+            if(isset($return_options[0]['Warranty_Duration_Option'])) {
+
+                $request_body .= '<WarrantyDurationOption>' . $return_options[0]['Warranty_Duration_Option'] . '</WarrantyDurationOption>
+                ';
+
+            }
+            if(isset($return_options[0]['Warranty_Offered_Option'])) {
+
+                $request_body .= '<WarrantyOfferedOption>' . $return_options[0]['Warranty_Offered_Option'] . '</WarrantyOfferedOption>
+                ';
+
+            }
+            if(isset($return_options[0]['Warranty_Type_Option'])) {
+
+                $request_body .= '<WarrantyTypeOption>' . $return_options[0]['Warranty_Type_Option'] . '</WarrantyTypeOption>
+                ';
+
+            }
+
+            $request_body .= '</ReturnPolicy>
+            ';
 
         }
 
@@ -739,11 +756,11 @@ class L5ebtapiController extends Controller
         $request_body .= '<ShippingType>' . $attributes['Shipping_Options'][0]['Shipping_Type'] . '</ShippingType>
         ';
 
-        if(isset($attributes['Exclude_Ship_To_Locations'])) {
+        if (isset($attributes['Exclude_Ship_To_Locations'])) {
 
             $excluded_ship_locations = $attributes['Exclude_Ship_To_Locations'];
 
-            foreach($excluded_ship_locations as $excluded_location) {
+            foreach ($excluded_ship_locations as $excluded_location) {
 
                 $request_body .= '<ExcludeShipToLocation>' . $excluded_location . '</ExcludeShipToLocation>
                 ';
@@ -751,48 +768,49 @@ class L5ebtapiController extends Controller
             }
 
         }
-        
-        if(isset($attributes['Shipping_Options'])) {
+
+        if (isset($attributes['Shipping_Options'])) {
 
             $shipping_options = $attributes['Shipping_Options'];
 
-            for ($i = 0; $i < count($shipping_options); $i++) {
+            foreach ($attributes['Shipping_Options'] as $shipping_option) {
 
-                if($i == 0) {
+                $request_body .= '<ShippingServiceOptions>
+                ';
 
-                    if($shipping_options[$i]['Free_Shipping']) {
+                if (isset($shipping_option['Shipping_Service_Priority'])) {
 
-                        $request_body .= '<ShippingServiceOptions>
-                                  <ShippingServicePriority>' . $shipping_options[$i]['Shipping_Service_Priority'] . '</ShippingServicePriority>
-                                  <ShippingService>' . $shipping_options[$i]['Shipping_Service'] . '</ShippingService>
-                                  <FreeShipping>' . $shipping_options[$i]['Free_Shipping'] . '</FreeShipping>
-                                  </ShippingServiceOptions>
-                                  ';
-
-                    }
-                    else {
-
-                        $request_body .= '<ShippingServiceOptions>
-                                  <ShippingServicePriority>' . $shipping_options[$i]['Shipping_Service_Priority'] . '</ShippingServicePriority>
-                                  <ShippingService>' . $shipping_options[$i]['Shipping_Service'] . '</ShippingService>
-                                  <FreeShipping>' . $shipping_options[$i]['Free_Shipping'] . '</FreeShipping>
-                                  <ShippingServiceCost currencyID="' . $shipping_options[$i]['Currency_Id'] . '">' . $shipping_options[$i]['Shipping_Cost'] . '</ShippingServiceCost>
-                                  </ShippingServiceOptions>
-                                  ';
-
-                    }
+                    $request_body .= '<ShippingServicePriority>' . $shipping_option['Shipping_Service_Priority'] . '</ShippingServicePriority>
+                    ';
 
                 }
-                else {
+                if (isset($shipping_option['Shipping_Service'])) {
 
-                    $request_body .= '<ShippingServiceOptions>
-                                  <ShippingServicePriority>' . $shipping_options[$i]['Shipping_Service_Priority'] . '</ShippingServicePriority>
-                                  <ShippingService>' . $shipping_options[$i]['Shipping_Service'] . '</ShippingService>
-                                  <ShippingServiceCost currencyID="' . $shipping_options[$i]['Currency_Id'] . '">' . $shipping_options[$i]['Shipping_Cost'] . '</ShippingServiceCost>
-                                  </ShippingServiceOptions>
-                                  ';
+                    $request_body .= '<ShippingService>' . $shipping_option['Shipping_Service'] . '</ShippingService>
+                    ';
 
                 }
+                if (isset($shipping_option['Free_Shipping'])) {
+
+                    $request_body .= '<FreeShipping>' . $shipping_option['Free_Shipping'] . '</FreeShipping>
+                    ';
+
+                }
+                if (isset($shipping_option['Shipping_Service_Cost_Currency_Id']) && isset($shipping_option['Shipping_Service_Cost'])) {
+
+                    $request_body .= '<ShippingServiceCost currencyID="' . $shipping_option['Shipping_Service_Cost_Currency_Id'] . '">' . $shipping_option['Shipping_Service_Cost'] . '</ShippingServiceCost>
+                    ';
+
+                }
+                if (isset($shipping_option['Shipping_Service_Additional_Cost_Currency_Id']) && isset($shipping_option['Shipping_Service_Additional_Cost'])) {
+
+                    $request_body .= '<ShippingServiceAdditionalCost currencyID="' . $shipping_option['Shipping_Service_Additional_Cost_Currency_Id'] . '">' . $shipping_option['Shipping_Service_Additional_Cost'] . '</ShippingServiceAdditionalCost>
+                    ';
+
+                }
+
+                $request_body .= '</ShippingServiceOptions>
+                ';
 
             }
 
@@ -801,11 +819,11 @@ class L5ebtapiController extends Controller
         $request_body .= '</ShippingDetails>
                           ';
 
-        if(isset($attributes['Ship_To_Locations'])) {
+        if (isset($attributes['Ship_To_Locations'])) {
 
             $ship_to_locations = $attributes['Ship_To_Locations'];
 
-            foreach($ship_to_locations as $ship_to_location) {
+            foreach ($ship_to_locations as $ship_to_location) {
 
                 $request_body .= '<ShipToLocations>' . $ship_to_location . '</ShipToLocations>
                 ';
@@ -822,7 +840,7 @@ class L5ebtapiController extends Controller
                         <Version>' . $this->api_compatibility_level . '</Version>
                         <WarningLevel>' . $this->api_warning_level . '</WarningLevel>
                         </AddFixedPriceItemRequest>';
-        
+
         //dd($request_body);
 
         $responseXml = L5ebtapiController::request('AddFixedPriceItem', $request_body);
@@ -840,7 +858,7 @@ class L5ebtapiController extends Controller
             Log::error('eBay API Call: addFixedPriceItem() Error sending request. The XML response is an empty string');
 
             return ['Error:' => 'There was an error sending request the XML response is an empty string. Please verify all' .
-            'eBay API settings are correct and try the request again.'];
+                'eBay API settings are correct and try the request again.'];
 
         }
 
@@ -927,8 +945,7 @@ class L5ebtapiController extends Controller
 
             }
 
-        }
-        else {
+        } else {
 
             Log::error('eBay API Call: AddFixedPriceItem(): An error occurred during the AddFixedPriceItem() ebay API' .
                 'call. Please verify all API settings are correct and then try the request again.');
@@ -1025,7 +1042,6 @@ class L5ebtapiController extends Controller
         return $response->getBody()->getContents();
 
     } // END - multiPartRequest($call_name, $request_body, $boundary)
-
 
 
 }// END of class L5ebtapiController
