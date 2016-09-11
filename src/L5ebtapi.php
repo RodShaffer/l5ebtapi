@@ -37,6 +37,13 @@ class L5ebtapi
 
     }
 
+    public function getCategoryFeatures($attributes)
+    {
+
+        return $this->tradingService->getCategoryFeatures($attributes);
+        
+    }
+
     public function getItem($item_id)
     {
 

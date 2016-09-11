@@ -218,25 +218,30 @@ class L5ebtapiController extends Controller
     }// END getEbayOfficialTime()
 
     /**
-     * Method: getEbayDetails() - Retrieves eBay IDs and codes for Example shipping service codes, enumerated data
+     * Method: getEbayDetails(array $detailNames) - Retrieves eBay IDs and codes for Example shipping service codes, enumerated data
      * for Example payment methods, and other common eBay meta-data.
      *
      * @return SimpleXML Object OR Array with a key = 'Error:' and Value = 'The error message'
      */
-    public function getEbayDetails($detailName)
+    public function getEbayDetails(array $detailNames)
     {
 
         $request_body = '<?xml version="1.0" encoding="utf-8"?>
                          <GeteBayDetailsRequest xmlns="urn:ebay:apis:eBLBaseComponents">
                          <RequesterCredentials>
                          <eBayAuthToken>' . $this->api_user_token . '</eBayAuthToken>
-                         </RequesterCredentials>
+                         </RequesterCredentials>';
 
-                         <!-- Call-specific Input Fields -->
-                         <DetailName>' . $detailName . '</DetailName>
+                         /* Call-specific Input Fields */
+                         foreach($detailNames as $detailName) {
 
-                         <!-- Standard Input Fields -->
-                         <ErrorLanguage>' . $this->api_error_language . '</ErrorLanguage>
+                             $request_body .= '<DetailName>' . $detailName . '</DetailName>
+                             ';
+
+                         }
+
+                         /* Standard Input Fields */
+        $request_body .= '<ErrorLanguage>' . $this->api_error_language . '</ErrorLanguage>
                          <Version>' . $this->api_compatibility_level . '</Version>
                          <WarningLevel>' . $this->api_warning_level . '</WarningLevel>
                          </GeteBayDetailsRequest>​';
@@ -264,8 +269,6 @@ class L5ebtapiController extends Controller
         $responseDoc = new DomDocument();
 
         $responseDoc->loadXML($responseXml);
-
-        //dd($responseDoc->saveXML());
 
         $ack = $responseDoc->getElementsByTagName('Ack');
 
@@ -342,33 +345,314 @@ class L5ebtapiController extends Controller
             Log::error('eBay API Call: getEbayDetails(): An error occurred during the getEbayDetails() ebay API' .
                 'call. Please verify all API settings are correct and then try the request again.');
 
-            return ['Error:' => 'An error occurred during the getEbayDetails() ebay API call.' .
-                'Please verify all API settings are correct and then try the request again.'];
+            return ['Error:' => 'An error occurred during the getEbayDetails() ebay API call. Please verify all' .
+                'API settings are correct and then try the request again. Additionally More information about the' .
+                'error may be available in the error.log file.'];
 
         }
 
     }// END getEbayDetails()
-
+    
     /**
-     * Method: getItem($item_id) - Retrieves the eBay item detail for the given eBay item id.
+     * Method: getCategoryFeatures(array $attributes) - returns information that describes the feature and value
+     * settings that apply to the set of eBay categories.
      *
      * @return SimpleXML Object OR Array with a key = 'Error:' and Value = 'The error message'
      */
-    public function getItem($item_id)
+    public function getCategoryFeatures(array $attributes)
+    {
+
+        $request_body = '<?xml version="1.0" encoding="utf-8"?>
+                        <GetCategoryFeaturesRequest xmlns="urn:ebay:apis:eBLBaseComponents">
+                        <RequesterCredentials>
+                         <eBayAuthToken>' . $this->api_user_token . '</eBayAuthToken>
+                         </RequesterCredentials>
+                         ';
+
+                        /* Call-specific Input Fields */
+                        if(isset($attributes['AllFeaturesForCategory'])) {
+                            $request_body .= '<AllFeaturesForCategory>' . $attributes['AllFeaturesForCategory'] . '</AllFeaturesForCategory>
+                            ';
+                        }
+                        if(isset($attributes['CategoryID'])) {
+                            $request_body .= '<CategoryID>' . $attributes['CategoryID'] . '</CategoryID>
+                            ';
+                        }
+                        if(isset($attributes['FeatureID'])) {
+
+                            foreach($attributes['FeatureID'] as $featureID) {
+
+                                $request_body .= '<FeatureID>' . $featureID . '</FeatureID>
+                                ';
+
+                            }
+                        }
+                        if(isset($attributes['LevelLimit'])) {
+
+                            $request_body .= '<LevelLimit>' . $attributes['LevelLimit'] . '</LevelLimit>
+                            ';
+
+                        }
+                        if(isset($attributes['ViewAllNodes'])) {
+
+                            $request_body .= '<ViewAllNodes>' . $attributes['ViewAllNodes'] . '</ViewAllNodes>
+                            ';
+
+                        }
+
+                        /* Standard Input Fields */
+                        if(isset($attributes['DetailLevel'])) {
+
+                            foreach($attributes['DetailLevel'] as $detailLevel) {
+
+                                $request_body .= '<DetailLevel>' . $detailLevel . '</DetailLevel>
+                                ';
+
+                            }
+                        }
+                        if(isset($attributes['MessageID'])) {
+
+                            $request_body .= '<MessageID>' . $attributes['MessageID'] . '</MessageID>
+                            ';
+
+                        }
+                        if(isset($attributes['OutputSelector'])) {
+
+                            foreach($attributes['OutputSelector'] as $outputSelector) {
+
+                                $request_body .= '<OutputSelector>' . $outputSelector . '</OutputSelector>
+                                ';
+
+                            }
+                        }
+
+        $request_body .= '<ErrorLanguage>' . $this->api_error_language . '</ErrorLanguage>
+                         <Version>' . $this->api_compatibility_level . '</Version>
+                         <WarningLevel>' . $this->api_warning_level . '</WarningLevel>
+                         </GetCategoryFeaturesRequest>​';
+
+        $responseXml = L5ebtapiController::request('GetCategoryFeatures', $request_body);
+
+        if (stristr($responseXml, 'HTTP 404')) {
+
+            Log::error('eBay API Call: getCategoryFeatures() 404 Not Found');
+
+            return ['Error:' => '404 Not Found. Please verify all eBay API settings are correct and try the request again.'];
+
+        }
+
+        if ($responseXml == '') {
+
+            Log::error('eBay API Call: getCategoryFeatures() Error sending request. The XML response is an empty string');
+
+            return ['Error:' => 'There was an error sending request the XML response is an empty string.' .
+                'Please verify all eBay API settings are correct and try the request again.'];
+
+        }
+
+        //Xml string is parsed and creates a DOM Document object
+        $responseDoc = new DomDocument();
+
+        $responseDoc->loadXML($responseXml);
+
+        $ack = $responseDoc->getElementsByTagName('Ack');
+
+        if ($ack->item(0)->nodeValue && $ack->item(0)->nodeValue == 'Failure' || $ack->item(0)->nodeValue == 'Warning') {
+
+            //get any error nodes
+            $errors = $responseDoc->getElementsByTagName('Errors');
+
+            //if there are error nodes return the error message (array)
+            if ($errors->length > 0) {
+
+                $code = $errors->item(0)->getElementsByTagName('ErrorCode');
+
+                $shortMsg = $errors->item(0)->getElementsByTagName('ShortMessage');
+
+                $longMsg = $errors->item(0)->getElementsByTagName('LongMessage');
+
+                if ($ack->item(0)->nodeValue == 'Failure') {
+
+                    //if there is a long message (ie ErrorLevel=1), construct the error message array with short & long message
+                    if (count($longMsg) > 0) {
+
+                        Log::error('eBay API Call: getCategoryFeatures() Short message: ' .
+                            $code->item(0)->nodeValue . ' : ' . $shortMsg->item(0)->nodeValue);
+
+                        Log::error('eBay API Call: getCategoryFeatures() Long message: ' .
+                            $longMsg->item(0)->nodeValue);
+
+                        return ['Error:' => $code->item(0)->nodeValue . ' : Short Message: ' .
+                            $shortMsg->item(0)->nodeValue . ' : Long Message: ' . $longMsg->item(0)->nodeValue];
+
+                    } else {
+
+                        Log::error('eBay API Call: getCategoryFeatures() Short message: ' .
+                            $code->item(0)->nodeValue . ' : ' . $shortMsg->item(0)->nodeValue);
+
+                        return ['Error:' => $code->item(0)->nodeValue . ' : Short Message: ' . $shortMsg->item(0)->nodeValue];
+
+                    }
+
+                }
+                if ($ack->item(0)->nodeValue == 'Warning') {
+
+                    //if there is a long message (ie ErrorLevel=1), construct the error message array with short & long message
+                    if (count($longMsg) > 0) {
+
+                        Log::warning('eBay API Call: getCategoryFeatures() Short message: ' .
+                            $code->item(0)->nodeValue . ' : ' . $shortMsg->item(0)->nodeValue);
+
+                        Log::warning('eBay API Call: getCategoryFeatures() Long message: ' .
+                            $longMsg->item(0)->nodeValue);
+
+                    } else {
+
+                        Log::warning('eBay API Call: getCategoryFeatures() Short message: ' .
+                            $code->item(0)->nodeValue . ' : ' . $shortMsg->item(0)->nodeValue);
+
+                    }
+
+                }
+
+            }
+            
+        }
+        if ($ack->item(0)->nodeValue && $ack->item(0)->nodeValue == 'Success' || $ack->item(0)->nodeValue == 'Warning') {
+
+            $xml = simplexml_load_string($responseDoc->saveXML());
+
+            return $xml;
+
+        } else {
+
+            Log::error('eBay API Call: getCategoryFeatures(): An error occurred during the getCategoryFeatures() ebay API' .
+                'call. Please verify all API settings are correct and then try the request again.');
+
+            return ['Error:' => 'An error occurred during the getCategoryFeatures() ebay API call. Please verify all' .
+                'API settings are correct and then try the request again. Additionally More information about the' .
+                'error may be available in the error.log file.'];
+
+        }
+
+    }// END getCategoryFeatures()
+
+    /**
+     * Method: getItem(array $attributes) - Retrieves the eBay item detail for the given eBay item id.
+     *
+     * @return SimpleXML Object OR Array with a key = 'Error:' and Value = 'The error message'
+     */
+    public function getItem(array $attributes)
     {
 
         $request_body = '<?xml version="1.0" encoding="utf-8"?>
                         <GetItemRequest xmlns="urn:ebay:apis:eBLBaseComponents">
                         <RequesterCredentials>
                         <eBayAuthToken>' . $this->api_user_token . '</eBayAuthToken>
-                        </RequesterCredentials>
+                        </RequesterCredentials>';
                         
-                        <ItemID>' . $item_id . '</ItemID>
+                        /* Call-specific Input Fields */
+                        if(isset($attributes['IncludeItemCompatibilityList'])) {
+
+                            $request_body .= '<IncludeItemCompatibilityList>' . $attributes['IncludeItemCompatibilityList'] . ' </IncludeItemCompatibilityList>
+                            ';
+
+                        }
+                        if(isset($attributes['IncludeItemSpecifics'])) {
+
+                            $request_body .= '<IncludeItemSpecifics>' . $attributes['IncludeItemSpecifics'] . ' </IncludeItemSpecifics>
+                            ';
+
+                        }
+                        if(isset($attributes['IncludeTaxTable'])) {
+
+                            $request_body .= '<IncludeTaxTable>' . $attributes['IncludeTaxTable'] . ' </IncludeTaxTable>
+                            ';
+
+                        }
+                        if(isset($attributes['IncludeWatchCount'])) {
+
+                            $request_body .= '<IncludeWatchCount>' . $attributes['IncludeWatchCount'] . ' </IncludeWatchCount>
+                            ';
+
+                        }
+                        if(isset($attributes['ItemID'])) {
+
+                            $request_body .= '<ItemID>' . $attributes['ItemID'] . ' </ItemID>
+                            ';
+
+                        }
+                        if(isset($attributes['SKU'])) {
+
+                            $request_body .= '<SKU>' . $attributes['SKU'] . ' </SKU>
+                            ';
+
+                        }
+                        if(isset($attributes['TransactionID'])) {
+
+                            $request_body .= '<TransactionID>' . $attributes['TransactionID'] . ' </TransactionID>
+                            ';
+
+                        }
+                        if(isset($attributes['VariationSKU'])) {
+
+                            $request_body .= '<VariationSKU>' . $attributes['VariationSKU'] . ' </VariationSKU>
+                            ';
+
+                        }
+                        if(isset($attributes['VariationSpecifics'])) {
+
+                            $request_body .= '<VariationSpecifics>
+                                             ';
+
+                            foreach($attributes['VariationSpecifics'] as $variationSpecific) {
+
+                                $request_body .= '<NameValueList>
+                                                  <name>' . $variationSpecific['name'] . '</name>
+                                                 ';
+
+                                foreach ($variationSpecific['values'] as $value) {
+
+                                    $request_body .= '<Value>' . $value . '</Value>';
+
+                                }
+                            }
+
+                            $request_body .= '</VariationSpecifics>';
+
+                        }
                         
-                        <!-- Standard Input Fields -->
-                         <ErrorLanguage>' . $this->api_error_language . '</ErrorLanguage>
-                         <Version>' . $this->api_compatibility_level . '</Version>
-                         <WarningLevel>' . $this->api_warning_level . '</WarningLevel>
+                        /* Standard Input Fields */
+                        if(isset($attributes['DetailLevel'])) {
+
+                            $request_body .= '<DetailLevel>' . $attributes['DetailLevel'] . ' </DetailLevel>
+                            ';
+
+                        }
+
+        $request_body .= '<ErrorLanguage>' . $this->api_error_language . '</ErrorLanguage>
+                         ';
+
+                        if(isset($attributes['MessageID'])) {
+
+                            $request_body .= '<MessageID>' . $attributes['MessageID'] . '</MessageID>
+                            ';
+
+                        }
+
+                        if(isset($attributes['OutputSelector'])) {
+
+                            foreach($attributes['OutputSelector'] as $outputSelector) {
+
+                                $request_body .= '<OutputSelector>' . $outputSelector . '</OutputSelector>
+                                ';
+
+                            }
+
+                        }
+
+        $request_body .= '<Version>' . $this->api_compatibility_level . '</Version>
+                        <WarningLevel>' . $this->api_warning_level . '</WarningLevel>
                         </GetItemRequest>';
 
         $responseXml = L5ebtapiController::request('GetItem', $request_body);
@@ -488,8 +772,6 @@ class L5ebtapiController extends Controller
      */
     public function uploadSiteHostedPictures($multiPartImageData, $imageName)
     {
-
-        ///Build the request XML request which is first part of multi-part POST
         $xmlReq = '<?xml version="1.0" encoding="utf-8"?>
                            <UploadSiteHostedPicturesRequest xmlns="urn:ebay:apis:eBLBaseComponents">
                            <RequesterCredentials>
