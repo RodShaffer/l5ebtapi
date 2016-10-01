@@ -242,7 +242,7 @@ class L5ebtapiController extends Controller
      *
      * @return SimpleXML Object
      */
-    public function getEbayDetails(array $detailNames)
+    public function getEbayDetails(array $attributes)
     {
 
         $request_body = '<?xml version="1.0" encoding="utf-8"?>
@@ -252,14 +252,24 @@ class L5ebtapiController extends Controller
                          </RequesterCredentials>';
 
                          /* Call-specific Input Fields */
-                         foreach($detailNames as $detailName) {
+                         if (isset($attributes['DetailName'])) {
+                             foreach ($attributes['DetailName'] as $detailName) {
 
-                             $request_body .= '<DetailName>' . $detailName . '</DetailName>
+                                 $request_body .= '<DetailName>' . $detailName . '</DetailName>
                              ';
+
+                             }
 
                          }
 
                          /* Standard Input Fields */
+                         if(isset($attributes['MessageID'])) {
+
+                             $request_body .= '<MessageID>' . $attributes['MessageID'] . '</MessageID>
+                             ';
+
+                        }
+
         $request_body .= '<ErrorLanguage>' . $this->api_error_language . '</ErrorLanguage>
                          <Version>' . $this->api_compatibility_level . '</Version>
                          <WarningLevel>' . $this->api_warning_level . '</WarningLevel>
