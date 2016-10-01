@@ -1,7 +1,7 @@
 {
     "name": "rodshaffer/l5ebtapi",
     "type": "library",
-    "description": "Laravel 5.2 eBay Trading API Package. Easily add the eBay Trading API capabilities to your Laravel 5.2 projects.",
+    "description": "Laravel 5 eBay Trading API Package. Easily add the eBay Trading API capabilities to your Laravel 5 projects.",
     "keywords": [
         "rodshaffer",
         "l5ebtapi"
