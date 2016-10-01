@@ -112,10 +112,16 @@ class L5ebtapiController extends Controller
     /**
      * Method: getEbayOfficialTime() - get the eBay official time API call.
      *
-     * @return Array The eBay official time key = 'eBay_Official_Time' OR Array with a key = 'Error:' and Value = 'The error message'
-     * EX. ['Error:' => 'An error occurred during the request. please verify all settings are correct and try the request again.']
+     * @param array $attributes - See the eBay API reference
+     * http://developer.ebay.com/Devzone/XML/docs/Reference/ebay/GeteBayOfficialTime.html
+     * for all possible attributes.
+     *
+     * @return array key = 'eBay_Official_Time', value = the eBay official timestamp OR key = 'Error:' and value =
+     * 'The error message'
+     * EX. ['Error:' => 'An error occurred during the request. please verify all settings are correct and try the
+     * request again.']
      */
-    public function getEbayOfficialTime()
+    public function getEbayOfficialTime(array $attributes)
     {
 
         $request_body = '<?xml version="1.0" encoding="utf-8"?>
@@ -123,13 +129,22 @@ class L5ebtapiController extends Controller
                         <RequesterCredentials>
                         <eBayAuthToken>' . $this->api_user_token . '</eBayAuthToken>
                         </RequesterCredentials>
+                        ';
 
-                        <!-- Standard Input Fields -->
-                         <ErrorLanguage>' . $this->api_error_language . '</ErrorLanguage>
+                        /* Standard Input Fields */
+                        if(isset($attributes['MessageID'])) {
+
+                            $request_body .= '<MessageID>' . $attributes['MessageID'] . '</MessageID>
+                            ';
+
+                        }
+
+        $request_body .= '<ErrorLanguage>' . $this->api_error_language . '</ErrorLanguage>
                          <Version>' . $this->api_compatibility_level . '</Version>
                          <WarningLevel>' . $this->api_warning_level . '</WarningLevel>
 
-                        </GeteBayOfficialTimeRequest>​​​';
+                        </GeteBayOfficialTimeRequest>​​​
+                        ';
 
         $responseXml = L5ebtapiController::request('GeteBayOfficialTime', $request_body);
 
@@ -218,10 +233,14 @@ class L5ebtapiController extends Controller
     }// END getEbayOfficialTime()
 
     /**
-     * Method: getEbayDetails(array $detailNames) - Retrieves eBay IDs and codes for Example shipping service codes, enumerated data
-     * for Example payment methods, and other common eBay meta-data.
+     * Method: getEbayDetails(array attributes) - Retrieves eBay IDs and codes for Example shipping service codes,
+     * enumerated data for Example payment methods, and other common eBay meta-data.
      *
-     * @return SimpleXML Object OR Array with a key = 'Error:' and Value = 'The error message'
+     * @param array $attributes - See the eBay API reference
+     * http://developer.ebay.com/Devzone/XML/docs/Reference/ebay/GeteBayDetails.html
+     * for all possible attributes.
+     *
+     * @return SimpleXML Object
      */
     public function getEbayDetails(array $detailNames)
     {
@@ -252,7 +271,7 @@ class L5ebtapiController extends Controller
 
             Log::error('eBay API Call: getEbayDetails() 404 Not Found');
 
-            return ['Error:' => '404 Not Found. Please verify all eBay API settings are correct and try the request again.'];
+            die('<P>Error sending request. 404 Not Found.</P>');
 
         }
 
@@ -260,8 +279,7 @@ class L5ebtapiController extends Controller
 
             Log::error('eBay API Call: getEbayDetails() Error sending request. The XML response is an empty string');
 
-            return ['Error:' => 'There was an error sending request the XML response is an empty string.' .
-                'Please verify all eBay API settings are correct and try the request again.'];
+            die('<P>Error sending request. The XML response is an empty string.</P>');
 
         }
 
@@ -297,17 +315,16 @@ class L5ebtapiController extends Controller
                         Log::error('eBay API Call: getEbayDetails() Long message: ' .
                             $longMsg->item(0)->nodeValue);
 
-                        return ['Error:' => $code->item(0)->nodeValue . ' : Short Message: ' .
-                            $shortMsg->item(0)->nodeValue . ' : Long Message: ' . $longMsg->item(0)->nodeValue];
-
                     } else {
 
                         Log::error('eBay API Call: getEbayDetails() Short message: ' .
                             $code->item(0)->nodeValue . ' : ' . $shortMsg->item(0)->nodeValue);
 
-                        return ['Error:' => $code->item(0)->nodeValue . ' : Short Message: ' . $shortMsg->item(0)->nodeValue];
-
                     }
+
+                    $xml = simplexml_load_string($responseDoc->saveXML());
+
+                    return $xml;
 
                 }
                 if ($ack->item(0)->nodeValue == 'Warning') {
@@ -340,24 +357,194 @@ class L5ebtapiController extends Controller
 
             return $xml;
 
-        } else {
-
-            Log::error('eBay API Call: getEbayDetails(): An error occurred during the getEbayDetails() ebay API' .
-                'call. Please verify all API settings are correct and then try the request again.');
-
-            return ['Error:' => 'An error occurred during the getEbayDetails() ebay API call. Please verify all' .
-                'API settings are correct and then try the request again. Additionally More information about the' .
-                'error may be available in the error.log file.'];
-
         }
 
     }// END getEbayDetails()
+
+    /**
+     * Method: getCategories(array $attributes) - Use this call to retrieve the latest category hierarchy for the eBay
+     * site specified in the CategorySiteID property. By default, this is the site to which you submit the request.
+     * You can retrieve all categories on the site, or you can use CategoryParent to retrieve one particular category
+     * and its subcategories. The returned category list is contained in the CategoryArray property.
+     *
+     * @param array $attributes - See the eBay API reference
+     * http://developer.ebay.com/Devzone/XML/docs/Reference/ebay/GetCategories.html
+     * for all possible attributes.
+     *
+     * @return SimpleXML Object
+     */
+    public function getCategories(array $attributes)
+    {
+
+        $request_body = '<?xml version="1.0" encoding="utf-8"?>
+                        <GetCategoriesRequest xmlns="urn:ebay:apis:eBLBaseComponents">
+                        ';
+
+                        /* Call-specific Input Fields */
+                        if(isset($attributes['CategoryParent'])) {
+
+                            foreach($attributes['CategoryParent'] as $category_parent) {
+
+                                $request_body .= '<CategoryParent>' . $category_parent . '</CategoryParent>
+                                ';
+
+                            }
+                        }
+                        if(isset($attributes['CategorySiteID'])) {
+
+                            $request_body .= '<CategorySiteID>' . $attributes['CategorySiteID'] . '</CategorySiteID>
+                            ';
+
+                        }
+                        if(isset($attributes['LevelLimit'])) {
+
+                            $request_body .= '<LevelLimit>' . $attributes['LevelLimit'] . '</LevelLimit>
+                            ';
+
+                        }
+                        if(isset($attributes['ViewAllNodes'])) {
+
+                            $request_body .= '<ViewAllNodes>' . $attributes['ViewAllNodes'] . '</ViewAllNodes>
+                            ';
+
+                        }
+
+                        /* Standard Input Fields */
+                        if(isset($attributes['DetailLevel'])) {
+
+                            foreach($attributes['DetailLevel'] as $detailLevel) {
+
+                                $request_body .= '<DetailLevel>' . $detailLevel . '</DetailLevel>
+                                ';
+
+                            }
+                        }
+                        if(isset($attributes['MessageID'])) {
+
+                            $request_body .= '<MessageID>' . $attributes['MessageID'] . '</MessageID>
+                            ';
+
+                        }
+                        if(isset($attributes['OutputSelector'])) {
+
+                            foreach($attributes['OutputSelector'] as $outputSelector) {
+
+                                $request_body .= '<OutputSelector>' . $outputSelector . '</OutputSelector>
+                                ';
+
+                            }
+                        }
+                        
+                        
+        $request_body .= '<ErrorLanguage>' . $this->api_error_language . '</ErrorLanguage>
+                        <Version>' . $this->api_compatibility_level . '</Version>
+                        <WarningLevel>' . $this->api_warning_level . '</WarningLevel>
+                        </GetCategoriesRequest>';
+
+        $responseXml = L5ebtapiController::request('GetCategoryFeatures', $request_body);
+
+        if (stristr($responseXml, 'HTTP 404')) {
+
+            Log::error('eBay API Call: getCategories() 404 Not Found');
+
+            die('<P>Error sending request. 404 Not Found.</P>');
+
+        }
+
+        if ($responseXml == '') {
+
+            Log::error('eBay API Call: getCategories() Error sending request. The XML response is an empty string');
+
+            die('<P>Error sending request. The XML response is an empty string.</P>');
+
+        }
+
+        //Xml string is parsed and creates a DOM Document object
+        $responseDoc = new DomDocument();
+
+        $responseDoc->loadXML($responseXml);
+
+        $ack = $responseDoc->getElementsByTagName('Ack');
+
+        if ($ack->item(0)->nodeValue && $ack->item(0)->nodeValue == 'Failure' || $ack->item(0)->nodeValue == 'Warning') {
+
+            //get any error nodes
+            $errors = $responseDoc->getElementsByTagName('Errors');
+
+            //if there are error nodes return the error message (array)
+            if ($errors->length > 0) {
+
+                $code = $errors->item(0)->getElementsByTagName('ErrorCode');
+
+                $shortMsg = $errors->item(0)->getElementsByTagName('ShortMessage');
+
+                $longMsg = $errors->item(0)->getElementsByTagName('LongMessage');
+
+                if ($ack->item(0)->nodeValue == 'Failure') {
+
+                    //if there is a long message (ie ErrorLevel=1), construct the error message array with short & long message
+                    if (count($longMsg) > 0) {
+
+                        Log::error('eBay API Call: getCategoryFeatures() Short message: ' .
+                            $code->item(0)->nodeValue . ' : ' . $shortMsg->item(0)->nodeValue);
+
+                        Log::error('eBay API Call: getCategoryFeatures() Long message: ' .
+                            $longMsg->item(0)->nodeValue);
+
+                    } else {
+
+                        Log::error('eBay API Call: getCategoryFeatures() Short message: ' .
+                            $code->item(0)->nodeValue . ' : ' . $shortMsg->item(0)->nodeValue);
+
+                    }
+
+                    $xml = simplexml_load_string($responseDoc->saveXML());
+
+                    return $xml;
+
+                }
+                if ($ack->item(0)->nodeValue == 'Warning') {
+
+                    //if there is a long message (ie ErrorLevel=1), construct the error message array with short & long message
+                    if (count($longMsg) > 0) {
+
+                        Log::warning('eBay API Call: getCategoryFeatures() Short message: ' .
+                            $code->item(0)->nodeValue . ' : ' . $shortMsg->item(0)->nodeValue);
+
+                        Log::warning('eBay API Call: getCategoryFeatures() Long message: ' .
+                            $longMsg->item(0)->nodeValue);
+
+                    } else {
+
+                        Log::warning('eBay API Call: getCategoryFeatures() Short message: ' .
+                            $code->item(0)->nodeValue . ' : ' . $shortMsg->item(0)->nodeValue);
+
+                    }
+
+                }
+
+            }
+
+        }
+        if ($ack->item(0)->nodeValue && $ack->item(0)->nodeValue == 'Success' || $ack->item(0)->nodeValue == 'Warning') {
+
+            $xml = simplexml_load_string($responseDoc->saveXML());
+
+            return $xml;
+
+        }
+
+    }// END getCategories()
     
     /**
      * Method: getCategoryFeatures(array $attributes) - returns information that describes the feature and value
      * settings that apply to the set of eBay categories.
      *
-     * @return SimpleXML Object OR Array with a key = 'Error:' and Value = 'The error message'
+     * @param array $attributes - See the eBay API reference
+     * http://developer.ebay.com/Devzone/XML/docs/Reference/ebay/GetCategoryFeatures.html
+     * for all possible attributes.
+     *
+     * @return SimpleXML Object
      */
     public function getCategoryFeatures(array $attributes)
     {
@@ -437,7 +624,7 @@ class L5ebtapiController extends Controller
 
             Log::error('eBay API Call: getCategoryFeatures() 404 Not Found');
 
-            return ['Error:' => '404 Not Found. Please verify all eBay API settings are correct and try the request again.'];
+            die('<P>Error sending request. 404 Not Found.</P>');
 
         }
 
@@ -445,8 +632,7 @@ class L5ebtapiController extends Controller
 
             Log::error('eBay API Call: getCategoryFeatures() Error sending request. The XML response is an empty string');
 
-            return ['Error:' => 'There was an error sending request the XML response is an empty string.' .
-                'Please verify all eBay API settings are correct and try the request again.'];
+            die('<P>Error sending request. The XML response is an empty string.</P>');
 
         }
 
@@ -482,17 +668,16 @@ class L5ebtapiController extends Controller
                         Log::error('eBay API Call: getCategoryFeatures() Long message: ' .
                             $longMsg->item(0)->nodeValue);
 
-                        return ['Error:' => $code->item(0)->nodeValue . ' : Short Message: ' .
-                            $shortMsg->item(0)->nodeValue . ' : Long Message: ' . $longMsg->item(0)->nodeValue];
-
                     } else {
 
                         Log::error('eBay API Call: getCategoryFeatures() Short message: ' .
                             $code->item(0)->nodeValue . ' : ' . $shortMsg->item(0)->nodeValue);
 
-                        return ['Error:' => $code->item(0)->nodeValue . ' : Short Message: ' . $shortMsg->item(0)->nodeValue];
-
                     }
+
+                    $xml = simplexml_load_string($responseDoc->saveXML());
+
+                    return $xml;
 
                 }
                 if ($ack->item(0)->nodeValue == 'Warning') {
@@ -524,15 +709,6 @@ class L5ebtapiController extends Controller
 
             return $xml;
 
-        } else {
-
-            Log::error('eBay API Call: getCategoryFeatures(): An error occurred during the getCategoryFeatures() ebay API' .
-                'call. Please verify all API settings are correct and then try the request again.');
-
-            return ['Error:' => 'An error occurred during the getCategoryFeatures() ebay API call. Please verify all' .
-                'API settings are correct and then try the request again. Additionally More information about the' .
-                'error may be available in the error.log file.'];
-
         }
 
     }// END getCategoryFeatures()
@@ -540,7 +716,11 @@ class L5ebtapiController extends Controller
     /**
      * Method: getItem(array $attributes) - Retrieves the eBay item detail for the given eBay item id.
      *
-     * @return SimpleXML Object OR Array with a key = 'Error:' and Value = 'The error message'
+     * @param array $attributes - See the eBay API reference
+     * http://developer.ebay.com/Devzone/XML/docs/Reference/ebay/GetItem.html
+     * for all possible attributes.
+     *
+     * @return SimpleXML Object
      */
     public function getItem(array $attributes)
     {
@@ -659,18 +839,17 @@ class L5ebtapiController extends Controller
 
         if (stristr($responseXml, 'HTTP 404')) {
 
-            Log::error('eBay API Call: GetItem($item_id) 404 Not Found');
+            Log::error('eBay API Call: getItem() 404 Not Found');
 
-            return ['Error:' => '404 Not Found. Please verify all eBay API settings are correct and try the request again.'];
+            die('<P>Error sending request. 404 Not Found.</P>');
 
         }
 
         if ($responseXml == '') {
 
-            Log::error('eBay API Call: GetItem($item_id) Error sending request. The XML response is an empty string');
+            Log::error('eBay API Call: getItem() Error sending request. The XML response is an empty string');
 
-            return ['Error:' => 'There was an error sending request the XML response is an empty string.' .
-                'Please verify all eBay API settings are correct and try the request again.'];
+            die('<P>Error sending request. The XML response is an empty string.</P>');
 
         }
 
@@ -706,17 +885,16 @@ class L5ebtapiController extends Controller
                         Log::error('eBay API Call: getItem($item_id) Long message: ' .
                             $longMsg->item(0)->nodeValue);
 
-                        return ['Error:' => $code->item(0)->nodeValue . ' : Short Message: ' .
-                            $shortMsg->item(0)->nodeValue . ' : Long Message: ' . $longMsg->item(0)->nodeValue];
-
                     } else {
 
                         Log::error('eBay API Call: getItem($item_id) Short message: ' .
                             $code->item(0)->nodeValue . ' : ' . $shortMsg->item(0)->nodeValue);
 
-                        return ['Error:' => $code->item(0)->nodeValue . ' : Short Message: ' . $shortMsg->item(0)->nodeValue];
-
                     }
+
+                    $xml = simplexml_load_string($responseDoc->saveXML());
+
+                    return $xml;
 
                 }
                 if ($ack->item(0)->nodeValue == 'Warning') {
@@ -749,14 +927,6 @@ class L5ebtapiController extends Controller
 
             return $xml;
 
-        } else {
-
-            Log::error('eBay API Call: getItem($item_id): An error occurred during the getItem($item_id) ebay API' .
-                'call. Please verify all API settings are correct and then try the request again.');
-
-            return ['Error:' => 'An error occurred during the getItem($item_id) ebay API call.' .
-                'Please verify all API settings are correct and then try the request again.'];
-
         }
 
     }// END getItem($item_id)
@@ -764,13 +934,13 @@ class L5ebtapiController extends Controller
     /**
      * Method: uploadSiteHostedPictures($multiPartImageData, $image_name) - Upload an image to the eBay Picture Service.
      *
-     * @param $multiPartImageData the image data. Acceptable formats (jpg, gif, png)
+     * @param $image the image data. Acceptable formats (jpg, gif, png)
      * @param $image_name The name the uploaded image will have on the eBay Picture Services server.
-     * @return Array key = 'eBay_Picture_Url' Value = 'The URL to the picture' OR Array with a key = 'Error:' and
+     * @return array key = 'eBay_Picture_Url' Value = 'The URL to the picture' OR Array with a key = 'Error:' and
      * Value = 'The error message'
      * EX. ['Error:' => 'An error occurred during the request. please verify all settings are correct and try again.']
      */
-    public function uploadSiteHostedPictures($multiPartImageData, $imageName)
+    public function uploadSiteHostedPictures($image, $imageName)
     {
         $xmlReq = '<?xml version="1.0" encoding="utf-8"?>
                            <UploadSiteHostedPicturesRequest xmlns="urn:ebay:apis:eBLBaseComponents">
@@ -805,7 +975,7 @@ class L5ebtapiController extends Controller
         $secondPart .= 'Content-Disposition: form-data; name="dummy"; filename="dummy"' . $CRLF;
         $secondPart .= "Content-Transfer-Encoding: binary" . $CRLF;
         $secondPart .= "Content-Type: application/octet-stream" . $CRLF . $CRLF;
-        $secondPart .= $multiPartImageData;
+        $secondPart .= $image;
         $secondPart .= $CRLF;
         $secondPart .= "--" . $boundary . "--" . $CRLF;
 
@@ -854,8 +1024,7 @@ class L5ebtapiController extends Controller
      *
      * @param $attributes
      *
-     * @return Array The eBay item id and associated fees OR Array with a key = 'Error:' and Value = 'The error message'
-     * EX. ['Error:' => 'An error occurred during the request. please verify all settings are correct and try again.']
+     * @return SimpleXML Object The eBay item id and associated fees OR the error information.
      */
     public function addFixedPriceItem(array $attributes)
     {
@@ -1053,8 +1222,6 @@ class L5ebtapiController extends Controller
 
         if (isset($attributes['Shipping_Options'])) {
 
-            $shipping_options = $attributes['Shipping_Options'];
-
             foreach ($attributes['Shipping_Options'] as $shipping_option) {
 
                 $request_body .= '<ShippingServiceOptions>
@@ -1123,15 +1290,13 @@ class L5ebtapiController extends Controller
                         <WarningLevel>' . $this->api_warning_level . '</WarningLevel>
                         </AddFixedPriceItemRequest>';
 
-        //dd($request_body);
-
         $responseXml = L5ebtapiController::request('AddFixedPriceItem', $request_body);
 
         if (stristr($responseXml, 'HTTP 404')) {
 
             Log::error('eBay API Call: addFixedPriceItem() 404 Not Found');
 
-            return ['Error:' => '404 Not Found. Please verify all eBay API settings are correct and try the request again.'];
+            die('<P>Error sending request. 404 Not Found.</P>');
 
         }
 
@@ -1139,8 +1304,7 @@ class L5ebtapiController extends Controller
 
             Log::error('eBay API Call: addFixedPriceItem() Error sending request. The XML response is an empty string');
 
-            return ['Error:' => 'There was an error sending request the XML response is an empty string. Please verify all' .
-                'eBay API settings are correct and try the request again.'];
+            die('<P>Error sending request. The XML response is an empty string.</P>');
 
         }
 
@@ -1178,17 +1342,16 @@ class L5ebtapiController extends Controller
                         Log::error('eBay API Call: AddFixedPriceItem() Long message: ' .
                             $longMsg->item(0)->nodeValue);
 
-                        return ['Error:' => $code->item(0)->nodeValue . ' : Short Message: ' .
-                            $shortMsg->item(0)->nodeValue . ' : Long Message: ' . $longMsg->item(0)->nodeValue];
-
                     } else {
 
                         Log::error('eBay API Call: AddFixedPriceItem() Short message: ' .
                             $code->item(0)->nodeValue . ' : ' . $shortMsg->item(0)->nodeValue);
 
-                        return ['Error:' => $code->item(0)->nodeValue . ' : Short Message: ' . $shortMsg->item(0)->nodeValue];
-
                     }
+
+                    $xml = simplexml_load_string($responseDoc->saveXML());
+
+                    return $xml;
 
                 }
                 if ($ack->item(0)->nodeValue == 'Warning') {
@@ -1219,21 +1382,7 @@ class L5ebtapiController extends Controller
 
             $xml = simplexml_load_string($responseDoc->saveXML());
 
-            if ($xml->ItemID) {
-
-                $data = json_encode($xml);
-
-                return json_decode($data, TRUE);
-
-            }
-
-        } else {
-
-            Log::error('eBay API Call: AddFixedPriceItem(): An error occurred during the AddFixedPriceItem() ebay API' .
-                'call. Please verify all API settings are correct and then try the request again.');
-
-            return ['Error:' => 'An error occurred during the AddFixedPriceItem() ebay API call. Please verify all' .
-                'API settings are correct and then try the request again.'];
+            return $xml;
 
         }
 
@@ -1245,6 +1394,7 @@ class L5ebtapiController extends Controller
      *
      * @param $call_name the eBay API call name
      * @param $request_body the body of the request
+     * 
      * @return mixed
      */
     public function request($call_name, $request_body)

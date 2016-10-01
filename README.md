@@ -4,7 +4,12 @@
 [![Software License][ico-license]](LICENSE.md)
 [![Total Downloads][ico-downloads]][link-downloads]
 
-Laravel 5.2 eBay Trading API Package. Easily add the eBay Trading API capabilities to your Laravel 5.2 projects.
+Laravel 5 eBay Trading API Package. Easily add the eBay Trading API capabilities to your Laravel 5 projects.
+
+#####This package is under development and will be changing frequently. Use at your own risk.
+
+I will be updating the documentation as much as possible but I do have a full time job and between development of this
+package and the custom software I am developing the documentation is kind of lacking sometimes.
 
 Supports PSR4 Auto loading
 
