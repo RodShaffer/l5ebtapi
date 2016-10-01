@@ -23,17 +23,24 @@ class L5ebtapi
 
     }
 
-    public function getEbayOfficialTime()
+    public function getEbayOfficialTime($attributes)
     {
 
-        return $this->tradingService->getEbayOfficialTime();
+        return $this->tradingService->getEbayOfficialTime($attributes);
 
     }
 
-    public function getEbayDetails($detailName)
+    public function getEbayDetails($attributes)
     {
 
-        return $this->tradingService->getEbayDetails($detailName);
+        return $this->tradingService->getEbayDetails($attributes);
+
+    }
+
+    public function getCategories($attributes)
+    {
+
+        return $this->tradingService->getCategories($attributes);
 
     }
 
@@ -44,21 +51,21 @@ class L5ebtapi
         
     }
 
-    public function getItem($item_id)
+    public function getItem($attributes)
     {
 
-        return $this->tradingService->getItem($item_id);
+        return $this->tradingService->getItem($attributes);
 
     }
 
-    public function uploadSiteHostedPictures($multiPartImageData, $imageName)
+    public function uploadSiteHostedPictures($image, $imageName)
     {
 
-        return $this->tradingService->uploadSiteHostedPictures($multiPartImageData, $imageName);
+        return $this->tradingService->uploadSiteHostedPictures($image, $imageName);
 
     }
 
-    public function addFixedPriceItem(array $attributes)
+    public function addFixedPriceItem($attributes)
     {
 
         return $this->tradingService->addFixedPriceItem($attributes);

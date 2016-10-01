@@ -378,6 +378,9 @@ class L5ebtapiController extends Controller
 
         $request_body = '<?xml version="1.0" encoding="utf-8"?>
                         <GetCategoriesRequest xmlns="urn:ebay:apis:eBLBaseComponents">
+                        <RequesterCredentials>
+                         <eBayAuthToken>' . $this->api_user_token . '</eBayAuthToken>
+                         </RequesterCredentials>
                         ';
 
                         /* Call-specific Input Fields */
@@ -402,14 +405,6 @@ class L5ebtapiController extends Controller
                             ';
 
                         }
-                        if(isset($attributes['ViewAllNodes'])) {
-
-                            $request_body .= '<ViewAllNodes>' . $attributes['ViewAllNodes'] . '</ViewAllNodes>
-                            ';
-
-                        }
-
-                        /* Standard Input Fields */
                         if(isset($attributes['DetailLevel'])) {
 
                             foreach($attributes['DetailLevel'] as $detailLevel) {
@@ -419,6 +414,14 @@ class L5ebtapiController extends Controller
 
                             }
                         }
+                        if(isset($attributes['ViewAllNodes'])) {
+
+                            $request_body .= '<ViewAllNodes>' . $attributes['ViewAllNodes'] . '</ViewAllNodes>
+                            ';
+
+                        }
+
+                        /* Standard Input Fields */
                         if(isset($attributes['MessageID'])) {
 
                             $request_body .= '<MessageID>' . $attributes['MessageID'] . '</MessageID>
@@ -441,7 +444,7 @@ class L5ebtapiController extends Controller
                         <WarningLevel>' . $this->api_warning_level . '</WarningLevel>
                         </GetCategoriesRequest>';
 
-        $responseXml = L5ebtapiController::request('GetCategoryFeatures', $request_body);
+        $responseXml = L5ebtapiController::request('GetCategories', $request_body);
 
         if (stristr($responseXml, 'HTTP 404')) {
 
@@ -1394,7 +1397,7 @@ class L5ebtapiController extends Controller
      *
      * @param $call_name the eBay API call name
      * @param $request_body the body of the request
-     * 
+     *
      * @return mixed
      */
     public function request($call_name, $request_body)
