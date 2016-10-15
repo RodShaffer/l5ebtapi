@@ -58,10 +58,10 @@ class L5ebtapi
 
     }
 
-    public function uploadSiteHostedPictures($image, $imageName)
+    public function uploadSiteHostedPictures($attributes, $image)
     {
 
-        return $this->tradingService->uploadSiteHostedPictures($image, $imageName);
+        return $this->tradingService->uploadSiteHostedPictures($attributes, $image);
 
     }
 

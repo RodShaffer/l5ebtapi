@@ -939,7 +939,7 @@ class L5ebtapiController extends Controller
      * Value = 'The error message'
      * EX. ['Error:' => 'An error occurred during the request. please verify all settings are correct and try again.']
      */
-    public function uploadSiteHostedPictures(array $attributes, $image)
+    public function uploadSiteHostedPictures(array $attributes, $image = NULL)
     {
         $xmlReq = '<?xml version="1.0" encoding="utf-8"?>' . "\n";
         $xmlReq .= '<UploadSiteHostedPicturesRequest xmlns="urn:ebay:apis:eBLBaseComponents">' . "\n";
@@ -949,84 +949,135 @@ class L5ebtapiController extends Controller
 
         /* Call-specific Input Fields */
 
-        if (isset($attributes['ExtensionInDays'])) {
+        if (isset($image)) {
 
-            $xmlReq .= '<ExtensionInDays>' . $attributes['ExtensionInDays'] . '</ExtensionInDays>' . "\n";
+            if (isset($attributes['ExtensionInDays'])) {
+
+                $xmlReq .= '<ExtensionInDays>' . $attributes['ExtensionInDays'] . '</ExtensionInDays>' . "\n";
+
+            }
+
+            if (isset($attributes['PictureData'])) {
+
+                $xmlReq .= '<PictureData contentType="string">' . $attributes['PictureData'] . '</PictureData>' . "\n";
+
+            }
+
+            if (isset($attributes['PictureName'])) {
+
+                $xmlReq .= '<PictureName>' . $attributes['PictureName'] . '</PictureName>' . "\n";
+
+            }
+
+            if (isset($attributes['PictureSet'])) {
+
+                $xmlReq .= '<PictureSet>' . $attributes['PictureSet'] . '</PictureSet>' . "\n";
+
+            }
+
+            if (isset($attributes['PictureSystemVersion'])) {
+
+                $xmlReq .= '<PictureSystemVersion>' . $attributes['PictureSystemVersion'] . '</PictureSystemVersion>' . "\n";
+
+            }
+
+            if (isset($attributes['PictureUploadPolicy'])) {
+
+                $xmlReq .= '<PictureUploadPolicy>' . $attributes['PictureUploadPolicy'] . '</PictureUploadPolicy>' . "\n";
+
+            }
+
+            /* Standard Input Fields */
+
+            if (isset($attributes['MessageID'])) {
+
+                $xmlReq .= '<MessageID>' . $attributes['MessageID'] . '</MessageID>' . "\n";
+
+            }
+
+            $xmlReq .= '<ErrorLanguage>' . $this->api_error_language . '</ErrorLanguage>' . "\n";
+            $xmlReq .= '<Version>' . $this->api_compatibility_level . '</Version>' . "\n";
+            $xmlReq .= '<WarningLevel>' . $this->api_warning_level . '</WarningLevel>' . "\n";
+            $xmlReq .= '</UploadSiteHostedPicturesRequest>';
+
+            $boundary = "==Multipart_Boundary_x" . md5(mt_rand()) . "x";
+            $CRLF = "\r\n";
+
+            // The complete POST consists of an XML request plus the binary image separated by boundaries
+            $firstPart = '';
+            $firstPart .= "--" . $boundary . $CRLF;
+            $firstPart .= 'Content-Disposition: form-data; name="XML Payload"' . $CRLF;
+            $firstPart .= 'Content-Type: text/xml;charset=utf-8' . $CRLF . $CRLF;
+            $firstPart .= $xmlReq;
+            $firstPart .= $CRLF;
+
+            //$secondPart = '';
+            $secondPart = "--" . $boundary . $CRLF;
+            $secondPart .= 'Content-Disposition: form-data; name="dummy"; filename="dummy"' . $CRLF;
+            $secondPart .= "Content-Transfer-Encoding: binary" . $CRLF;
+            $secondPart .= "Content-Type: application/octet-stream" . $CRLF . $CRLF;
+            $secondPart .= $image;
+            $secondPart .= $CRLF;
+            $secondPart .= "--" . $boundary . "--" . $CRLF;
+
+            $request_body = $firstPart . $secondPart;
+
+            $respXmlStr = L5ebtapiController::multiPartRequest('UploadSiteHostedPictures', $request_body, $boundary);   // send multi-part request and get string XML response
+
+        } else {
+
+            if (isset($attributes['ExtensionInDays'])) {
+
+                $xmlReq .= '<ExtensionInDays>' . $attributes['ExtensionInDays'] . '</ExtensionInDays>' . "\n";
+
+            }
+
+            if (isset($attributes['ExternalPictureURL'])) {
+
+                $xmlReq .= '<ExternalPictureURL>' . $attributes['ExternalPictureURL'] . '</ExternalPictureURL>' . "\n";
+
+            }
+
+            if (isset($attributes['PictureName'])) {
+
+                $xmlReq .= '<PictureName>' . $attributes['PictureName'] . '</PictureName>' . "\n";
+
+            }
+
+            if (isset($attributes['PictureSet'])) {
+
+                $xmlReq .= '<PictureSet>' . $attributes['PictureSet'] . '</PictureSet>' . "\n";
+
+            }
+
+            if (isset($attributes['PictureSystemVersion'])) {
+
+                $xmlReq .= '<PictureSystemVersion>' . $attributes['PictureSystemVersion'] . '</PictureSystemVersion>' . "\n";
+
+            }
+
+            if (isset($attributes['PictureUploadPolicy'])) {
+
+                $xmlReq .= '<PictureUploadPolicy>' . $attributes['PictureUploadPolicy'] . '</PictureUploadPolicy>' . "\n";
+
+            }
+
+            /* Standard Input Fields */
+
+            if (isset($attributes['MessageID'])) {
+
+                $xmlReq .= '<MessageID>' . $attributes['MessageID'] . '</MessageID>' . "\n";
+
+            }
+
+            $xmlReq .= '<ErrorLanguage>' . $this->api_error_language . '</ErrorLanguage>' . "\n";
+            $xmlReq .= '<Version>' . $this->api_compatibility_level . '</Version>' . "\n";
+            $xmlReq .= '<WarningLevel>' . $this->api_warning_level . '</WarningLevel>' . "\n";
+            $xmlReq .= '</UploadSiteHostedPicturesRequest>';
+
+            $respXmlStr = L5ebtapiController::request('UploadSiteHostedPictures', $xmlReq);
 
         }
-
-        if (isset($attributes['ExternalPictureURL'])) {
-
-            $xmlReq .= '<ExternalPictureURL>' . $attributes['ExternalPictureURL'] . '</ExternalPictureURL>' . "\n";
-
-        }
-
-        if (isset($attributes['PictureData'])) {
-
-            $xmlReq .= '<PictureData contentType="string">' . $attributes['PictureData'] . '</PictureData>' . "\n";
-
-        }
-
-        if (isset($attributes['PictureName'])) {
-
-            $xmlReq .= '<PictureName>' . $attributes['PictureName'] . '</PictureName>' . "\n";
-
-        }
-
-        if (isset($attributes['PictureSet'])) {
-
-            $xmlReq .= '<PictureSet>' . $attributes['PictureSet'] . '</PictureSet>' . "\n";
-
-        }
-
-        if (isset($attributes['PictureSystemVersion'])) {
-
-            $xmlReq .= '<PictureSystemVersion>' . $attributes['PictureSystemVersion'] . '</PictureSystemVersion>' . "\n";
-
-        }
-
-        if (isset($attributes['<PictureUploadPolicy'])) {
-
-            $xmlReq .= '<PictureUploadPolicy>' . $attributes['PictureUploadPolicy'] . '</PictureUploadPolicy>' . "\n";
-
-        }
-
-        /* Standard Input Fields */
-
-        if (isset($attributes['MessageID'])) {
-
-            $xmlReq .= '<MessageID>' . $attributes['MessageID'] . '</MessageID>' . "\n";
-
-        }
-
-        $xmlReq .= '<ErrorLanguage>' . $this->api_error_language . '</ErrorLanguage>' . "\n";
-        $xmlReq .= '<Version>' . $this->api_compatibility_level . '</Version>' . "\n";
-        $xmlReq .= '<WarningLevel>' . $this->api_warning_level . '</WarningLevel>' . "\n";
-        $xmlReq .= '</UploadSiteHostedPicturesRequest>';
-
-        $boundary = "==Multipart_Boundary_x" . md5(mt_rand()) . "x";
-        $CRLF = "\r\n";
-
-        // The complete POST consists of an XML request plus the binary image separated by boundaries
-        $firstPart = '';
-        $firstPart .= "--" . $boundary . $CRLF;
-        $firstPart .= 'Content-Disposition: form-data; name="XML Payload"' . $CRLF;
-        $firstPart .= 'Content-Type: text/xml;charset=utf-8' . $CRLF . $CRLF;
-        $firstPart .= $xmlReq;
-        $firstPart .= $CRLF;
-
-        //$secondPart = '';
-        $secondPart = "--" . $boundary . $CRLF;
-        $secondPart .= 'Content-Disposition: form-data; name="dummy"; filename="dummy"' . $CRLF;
-        $secondPart .= "Content-Transfer-Encoding: binary" . $CRLF;
-        $secondPart .= "Content-Type: application/octet-stream" . $CRLF . $CRLF;
-        $secondPart .= $image;
-        $secondPart .= $CRLF;
-        $secondPart .= "--" . $boundary . "--" . $CRLF;
-
-        $request_body = $firstPart . $secondPart;
-
-        $respXmlStr = L5ebtapiController::multiPartRequest('UploadSiteHostedPictures', $request_body, $boundary);   // send multi-part request and get string XML response
 
         if (stristr($respXmlStr, 'HTTP 404')) {
 

@@ -14,8 +14,17 @@ site specified in the CategorySiteID property. By default, this is the site to w
 - Method: uploadSiteHostedPictures(array $attributes, $image) - Use this call to upload a picture to eBay Picture
  Services (EPS). You can either include a binary attachment or supply a URL in the ExternalPictureURL field to the
  location of the picture on an external web server.
-- Method: addFixedPriceItem(array $attributes) - Add an eBay fixed priced item listing. All features now supported.
+- Method: addFixedPriceItem(array $attributes) - Add an eBay fixed priced item listing. All options now supported.
 - Method: getItem(array $attributes) - Retrieves the eBay item detail.
+
+ I will be updating the documentation in the near future. I will also be changing the location that the documentation
+ is stored. This will hopefully make the readability better. So please stay tuned for the changes that are coming.
+ 
+ The addfixedpriceitem method now supports all options. If you find any bugs please send me an email at the following
+ email address htmlplus43@yahoo.com
+ 
+ I also fixed the uploadsitehostedpictures method to support all options. If using an external picture url simply set
+ the image parameter to NULL like the following example. uploadSiteHostedPictures($attributes, NULL)
 
 ### Deprecated
 - Nothing.
