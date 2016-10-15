@@ -11,11 +11,10 @@ Updates should follow the [Keep a CHANGELOG](http://keepachangelog.com/) princip
 - Method: getEbayDetails(array $attributes) - Get various eBay metadata. Example. get the eBay shipping service options.
 - Method: getCategories(array $attributes) - Use this call to retrieve the latest category hierarchy for the eBay
 site specified in the CategorySiteID property. By default, this is the site to which you submit the request.
-- Method: uploadSiteHostedPictures($image, $image_name) - Upload an image to the eBay Picture Service.
-- Method: addFixedPriceItem(array $attributes) - Add an eBay fixed priced item listing. Method works but is not complete.
- Does not support all the options. I have tested this method using Flat rate shipping (No international shipping support
- at this time) I have not tested with Calculated shipping. Not all options supported at this time. I have an example on
- the Wiki which will show what is supported at this time.
+- Method: uploadSiteHostedPictures(array $attributes, $image) - Use this call to upload a picture to eBay Picture
+ Services (EPS). You can either include a binary attachment or supply a URL in the ExternalPictureURL field to the
+ location of the picture on an external web server.
+- Method: addFixedPriceItem(array $attributes) - Add an eBay fixed priced item listing. All features now supported.
 - Method: getItem(array $attributes) - Retrieves the eBay item detail.
 
 ### Deprecated

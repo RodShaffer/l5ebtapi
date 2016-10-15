@@ -28,6 +28,13 @@ rodshaffer\l5ebtapi\L5ebtapiServiceProvider::class,
 ## Usage
 
 For information on usage visit our [Wiki]
+I will be updating the documentation in the near future and I will also be changing the location that the documentation
+ is stored. This will hopefully make the readability better. So please stay tuned for the changes that are coming.
+ The addfixedpriceitem method now supports all of the features. If you find any bugs please send me an email at the
+ email address below.
+ I also fixed the uploadsitehostedpictures method to support all the features but discovered a slight glitch if you want
+ to use an external url for your pictures so I will be fixing this in the near future. However other then this small bug
+ the method fully works.
 
 ## Change log
 
