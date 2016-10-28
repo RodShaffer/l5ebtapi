@@ -36,7 +36,7 @@ class L5ebtapiController extends Controller
 
     }// END constructor
 
-    public function init($attributes)
+    public function init(array $attributes)
     {
 
         if (isset($attributes['api_url']) && strlen($attributes['api_url']) > 0) {
@@ -712,6 +712,241 @@ class L5ebtapiController extends Controller
         }
 
     }// END getCategoryFeatures()
+
+    /**
+     * Method: getCategorySpecifics(array $attributes) - Use this call to retrieve the most popular Item Specifics that
+     * sellers can use when they list items in certain categories.
+     *
+     * @param array $attributes - See the eBay API reference
+     * http://developer.ebay.com/devzone/xml/docs/Reference/ebay/GetCategorySpecifics.html#sampleCSAvariations
+     * for all possible attributes.
+     *
+     * @return SimpleXML Object
+     */
+    public function getCategorySpecifics(array $attributes)
+    {
+
+        $request_body = '<?xml version="1.0" encoding="utf-8"?>' . "\n";
+        $request_body .= '<GetCategorySpecificsRequest xmlns="urn:ebay:apis:eBLBaseComponents">' . "\n";
+        $request_body .= '<RequesterCredentials>' . "\n";
+        $request_body .= '<eBayAuthToken>' . $this->api_user_token . '</eBayAuthToken>' . "\n";
+        $request_body .= '</RequesterCredentials>' . "\n";
+
+        /* Call-specific Input Fields */
+
+        if (isset($attributes['CategoryID'])) {
+
+            foreach ($attributes['CategoryID'] as $category_id) {
+
+                $request_body .= '<CategoryID>' . $category_id . '</CategoryID>' . "\n";
+
+                /* more CategoryID values allowed here */
+
+            }
+
+        }
+
+        if (isset($attributes['CategorySpecific'])) {
+
+            foreach ($attributes['CategorySpecific'] as $category_specific) {
+
+                $request_body .= '<CategorySpecific>' . "\n";
+
+                foreach ($category_specific['CategoryID'] as $category_id) {
+
+                    $request_body .= '<CategoryID>' . $category_id . '</CategoryID>' . "\n";
+
+                    /* more CategoryID values allowed here */
+
+                }
+
+                if (isset($category_specific['ItemSpecifics'])) {
+
+                    $request_body .= '<ItemSpecifics>' . "\n";
+
+                    foreach ($category_specific['ItemSpecifics'] as $item_specific) {
+
+                        $request_body .= '<NameValueList>' . "\n";
+                        $request_body .= '<Name>' . $item_specific['Name'] . '</Name>' . "\n";
+
+                        foreach ($item_specific['Value'] as $value) {
+
+                            $request_body .= '<Value>' . $value . '</Value>' . "\n";
+
+                            /* more Value values allowed here */
+
+                        }
+
+                        $request_body .= '</NameValueList>';
+
+                    }
+
+                    $request_body .= '</ItemSpecifics>' . "\n";
+
+                }
+
+                $request_body .= '</CategorySpecific>' . "\n";
+
+                /* more CategorySpecific nodes allowed here */
+
+            }
+
+        }
+
+        if (isset($attributes['CategorySpecificsFileInfo'])) {
+
+            $request_body .= '<CategorySpecificsFileInfo>' . $attributes['CategorySpecificsFileInfo'] .
+                '</CategorySpecificsFileInfo>' . "\n";
+
+        }
+
+        if (isset($attributes['ExcludeRelationships'])) {
+
+            $request_body .= '<ExcludeRelationships>' . $attributes['ExcludeRelationships'] .
+                '</ExcludeRelationships>' . "\n";
+
+        }
+
+        if (isset($attributes['IncludeConfidence'])) {
+
+            $request_body .= '<IncludeConfidence>' . $attributes['IncludeConfidence'] .
+                '</IncludeConfidence>' . "\n";
+
+        }
+
+        if (isset($attributes['LastUpdateTime'])) {
+
+            $request_body .= '<LastUpdateTime>' . $attributes['LastUpdateTime'] .
+                '</LastUpdateTime>' . "\n";
+
+        }
+
+        if (isset($attributes['MaxNames'])) {
+
+            $request_body .= '<MaxNames>' . $attributes['MaxNames'] .
+                '</MaxNames>' . "\n";
+
+        }
+
+        if (isset($attributes['MaxValuesPerName'])) {
+
+            $request_body .= '<MaxValuesPerName>' . $attributes['MaxValuesPerName'] .
+                '</MaxValuesPerName>' . "\n";
+
+        }
+
+        if (isset($attributes['Name'])) {
+
+            $request_body .= '<Name>' . $attributes['Name'] .
+                '</Name>' . "\n";
+
+        }
+
+        if (isset($attributes['MessageID'])) {
+
+            $request_body .= '<MessageID>' . $attributes['MessageID'] . '</MessageID>' . "\n";
+
+        }
+
+        $request_body .= '<ErrorLanguage>' . $this->api_error_language . '</ErrorLanguage>' . "\n";
+        $request_body .= '<Version>' . $this->api_compatibility_level . '</Version>' . "\n";
+        $request_body .= '<WarningLevel>' . $this->api_warning_level . '</WarningLevel>' . "\n";
+        $request_body .= '</GetCategorySpecificsRequest>​';
+
+        $responseXml = L5ebtapiController::request('GetCategorySpecifics', $request_body);
+
+        if (stristr($responseXml, 'HTTP 404')) {
+
+            Log::error('eBay API Call: getCategorySpecifics() 404 Not Found');
+
+            die('<P>Error sending request. 404 Not Found.</P>');
+
+        }
+
+        if ($responseXml == '') {
+
+            Log::error('eBay API Call: getCategorySpecifics() Error sending request. The XML response is an empty string');
+
+            die('<P>Error sending request. The XML response is an empty string.</P>');
+
+        }
+
+        //Xml string is parsed and creates a DOM Document object
+        $responseDoc = new DomDocument();
+
+        $responseDoc->loadXML($responseXml);
+
+        $ack = $responseDoc->getElementsByTagName('Ack');
+
+        if ($ack->item(0)->nodeValue && $ack->item(0)->nodeValue == 'Failure' || $ack->item(0)->nodeValue == 'Warning') {
+
+            //get any error nodes
+            $errors = $responseDoc->getElementsByTagName('Errors');
+
+            //if there are error nodes return the error message (array)
+            if ($errors->length > 0) {
+
+                $code = $errors->item(0)->getElementsByTagName('ErrorCode');
+
+                $shortMsg = $errors->item(0)->getElementsByTagName('ShortMessage');
+
+                $longMsg = $errors->item(0)->getElementsByTagName('LongMessage');
+
+                if ($ack->item(0)->nodeValue == 'Failure') {
+
+                    //if there is a long message (ie ErrorLevel=1), construct the error message array with short & long message
+                    if (count($longMsg) > 0) {
+
+                        Log::error('eBay API Call: getCategorySpecifics() Short message: ' .
+                            $code->item(0)->nodeValue . ' : ' . $shortMsg->item(0)->nodeValue);
+
+                        Log::error('eBay API Call: getCategorySpecifics() Long message: ' .
+                            $longMsg->item(0)->nodeValue);
+
+                    } else {
+
+                        Log::error('eBay API Call: getCategorySpecifics() Short message: ' .
+                            $code->item(0)->nodeValue . ' : ' . $shortMsg->item(0)->nodeValue);
+
+                    }
+
+                    $xml = simplexml_load_string($responseDoc->saveXML());
+
+                    return $xml;
+
+                }
+                if ($ack->item(0)->nodeValue == 'Warning') {
+
+                    //if there is a long message (ie ErrorLevel=1), construct the error message array with short & long message
+                    if (count($longMsg) > 0) {
+
+                        Log::warning('eBay API Call: getCategorySpecifics() Short message: ' .
+                            $code->item(0)->nodeValue . ' : ' . $shortMsg->item(0)->nodeValue);
+
+                        Log::warning('eBay API Call: getCategorySpecifics() Long message: ' .
+                            $longMsg->item(0)->nodeValue);
+
+                    } else {
+
+                        Log::warning('eBay API Call: getCategorySpecifics() Short message: ' .
+                            $code->item(0)->nodeValue . ' : ' . $shortMsg->item(0)->nodeValue);
+
+                    }
+
+                }
+
+            }
+
+        }
+        if ($ack->item(0)->nodeValue && $ack->item(0)->nodeValue == 'Success' || $ack->item(0)->nodeValue == 'Warning') {
+
+            $xml = simplexml_load_string($responseDoc->saveXML());
+
+            return $xml;
+
+        }
+
+    }// END getCategorySpecifics()
 
     /**
      * Method: getItem(array $attributes) - Retrieves the eBay item detail for the given eBay item id.

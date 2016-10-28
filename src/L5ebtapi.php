@@ -16,56 +16,62 @@ class L5ebtapi
         $this->tradingService = new L5ebtapiController();
     }
 
-    public function init($attributes)
+    public function init(array $attributes)
     {
 
         $this->tradingService->init($attributes);
 
     }
 
-    public function getEbayOfficialTime($attributes)
+    public function getEbayOfficialTime(array $attributes)
     {
 
         return $this->tradingService->getEbayOfficialTime($attributes);
 
     }
 
-    public function getEbayDetails($attributes)
+    public function getEbayDetails(array $attributes)
     {
 
         return $this->tradingService->getEbayDetails($attributes);
 
     }
 
-    public function getCategories($attributes)
+    public function getCategories(array $attributes)
     {
 
         return $this->tradingService->getCategories($attributes);
 
     }
 
-    public function getCategoryFeatures($attributes)
+    public function getCategoryFeatures(array $attributes)
     {
 
         return $this->tradingService->getCategoryFeatures($attributes);
         
     }
 
-    public function getItem($attributes)
+    public function getCategorySpecifics(array $attributes) {
+
+        return $this->tradingService->getCategorySpecifics($attributes);
+
+    }
+
+    public function getItem(array $attributes)
     {
 
         return $this->tradingService->getItem($attributes);
 
     }
 
-    public function uploadSiteHostedPictures($attributes, $image)
+    public function uploadSiteHostedPictures(array $attributes, $image)
     {
 
         return $this->tradingService->uploadSiteHostedPictures($attributes, $image);
 
     }
 
-    public function addFixedPriceItem($attributes)
+    public function addFixedPriceItem(array $attributes)
     {
 
         return $this->tradingService->addFixedPriceItem($attributes);
