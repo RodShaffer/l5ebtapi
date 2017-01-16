@@ -20,6 +20,12 @@ class L5ebtapiServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+
+        App::bind('L5ebtapi', function()
+        {
+            return new \rodshaffer\l5ebtapi\L5ebtapi;
+        });
+
         // use this if your package has views
         //$this->loadViewsFrom(realpath(__DIR__.'/resources/views'), 'l5ebtapi');
 

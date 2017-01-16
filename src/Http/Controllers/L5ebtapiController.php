@@ -229,6 +229,129 @@ class L5ebtapiController extends Controller
     }// END getEbayOfficialTime()
 
     /**
+     * Method: getSessionId() - Use this call to retrieve a SessionID, which is a unique identifier that you use for
+     * authentication during the token-creation process. You must have a valid SessionID value in order to make a
+     * FetchToken request.
+     *
+     * @param array $attributes - See the eBay API reference
+     * http://developer.ebay.com/Devzone/XML/docs/Reference/ebay/GetSessionID.html
+     * for all possible attributes.
+     *
+     * @return array key = 'Session_ID', value = 'the session id' OR key = 'Error:' and value =
+     * 'The error message'
+     * EX. ['Error:' => 'An error occurred during the request and a session id could not be retrieved.']
+     */
+    public function getSessionId(array $attributes)
+    {
+
+        $request_body = '<?xml version="1.0" encoding="utf-8"?>' . "\n";
+        $request_body .= '<GetSessionIDRequest xmlns="urn:ebay:apis:eBLBaseComponents">' . "\n";
+
+        /* Call Specific Input Fields */
+        $request_body .= '<RuName>' . $this->api_runame . '</RuName>' . "\n";
+
+        /* Standard Input Fields - MessageID required attribute to prevent csrf attacks */
+        if (isset($attributes['MessageID'])) {
+
+            $request_body .= '<MessageID>' . $attributes['MessageID'] . '</MessageID>' . "\n";
+
+        }
+
+        $request_body .= '<ErrorLanguage>' . $this->api_error_language . '</ErrorLanguage>' . "\n";
+        $request_body .= '<Version>' . $this->api_compatibility_level . '</Version>' . "\n";
+        $request_body .= '<WarningLevel>' . $this->api_warning_level . '</WarningLevel>' . "\n";
+        $request_body .= '</GetSessionIDRequest>​​​';
+
+        $responseXml = L5ebtapiController::request('GetSessionID', $request_body);
+
+        if (stristr($responseXml, 'HTTP 404')) {
+
+            Log::error('eBay API Call: getSessionId() 404 Not Found');
+
+            return ['Error:' => '404 Not Found. Please verify all eBay API settings are correct and try again.'];
+
+        }
+
+        if ($responseXml == '') {
+
+            Log::error('eBay API Call: getSessionId() Error sending request the XML response is an empty string');
+
+            return ['Error:' => 'The XML response is an empty string. Please verify all eBay API settings are correct' .
+                'and try again.'];
+
+        }
+
+        //Xml string is parsed and creates a DOM Document object
+        $responseDoc = new DomDocument();
+
+        $responseDoc->loadXML($responseXml);
+
+        //get any error nodes
+        $errors = $responseDoc->getElementsByTagName('Errors');
+
+        //if there are error nodes return the error message (array)
+        if ($errors->length > 0) {
+
+            $code = $errors->item(0)->getElementsByTagName('ErrorCode');
+
+            $shortMsg = $errors->item(0)->getElementsByTagName('ShortMessage');
+
+            $longMsg = $errors->item(0)->getElementsByTagName('LongMessage');
+
+            //if there is a long message (ie ErrorLevel=1), construct the error message array with short & long message
+            if (count($longMsg) > 0) {
+
+                Log::warning('eBay API Call: getSessionId(). Short message: ' .
+                    $code->item(0)->nodeValue . ' : ' . $shortMsg->item(0)->nodeValue);
+
+                Log::warning('eBay API Call: getSessionId(). Long message: ' .
+                    $longMsg->item(0)->nodeValue);
+
+            } else {
+
+                Log::warning('eBay API Call: getSessionId(). Short message: ' .
+                    $code->item(0)->nodeValue . ' : ' . $shortMsg->item(0)->nodeValue);
+
+            }
+
+            return ['Error:' => 'An error occurred while processing the getSessionId() request.' .
+                'Please verify all eBay API settings are correct and try the request again.'];
+
+        } else //no errors so return the session id as a (string)
+        {
+
+            $xml = simplexml_load_string($responseDoc->saveXML());
+
+            if ($xml->CorrelationID && $xml->CorrelationID == $attributes['MessageID']) {
+
+                if ($xml->Ack && ((string)$xml->Ack == 'Success')) {
+
+                    if ($xml->SessionID) {
+
+                        return ['SessionID' => (string)$xml->SessionID];
+
+                    } else {
+
+                        $session_id = ['Error:' => 'An error occurred While processing the getSessionId() request.' .
+                            'Please verify all eBay API settings are correct and try the request again.'];
+
+                    }
+
+                }
+            } else {
+
+                $session_id = ['Error:' => 'An error occurred While processing the getSessionId() request.' .
+                    'The MessageID did not match.'];
+
+            }
+
+        }
+
+        return $session_id;
+
+    }// END getSessionId()
+
+    /**
      * Method: getEbayDetails(array attributes) - Retrieves eBay IDs and codes for Example shipping service codes,
      * enumerated data for Example payment methods, and other common eBay meta-data.
      *

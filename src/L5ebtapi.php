@@ -30,6 +30,12 @@ class L5ebtapi
 
     }
 
+    public function getSessionId(array $attributes) {
+
+        return $this->tradingService->getSessionId($attributes);
+
+    }
+
     public function getEbayDetails(array $attributes)
     {
 
