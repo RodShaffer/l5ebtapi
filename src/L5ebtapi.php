@@ -36,6 +36,12 @@ class L5ebtapi
 
     }
 
+    public function fetchToken(array $attributes) {
+
+        return $this->tradingService->fetchToken($attributes);
+
+    }
+
     public function getEbayDetails(array $attributes)
     {
 

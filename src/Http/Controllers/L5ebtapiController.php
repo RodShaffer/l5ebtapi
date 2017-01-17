@@ -352,6 +352,136 @@ class L5ebtapiController extends Controller
     }// END getSessionId()
 
     /**
+     * Method: fetchToken() - Use this call to retrieve an authentication token for a user. The call can be used to get
+     * a token only after the specified user has given consent for the token to be generated. Consent is given through
+     * the eBay sign-in page. After token retrieval, the token can be used to authenticate other calls made on behalf
+     * of the associated user.
+     *
+     * @param array $attributes - See the eBay API reference
+     * http://developer.ebay.com/DevZone/XML/docs/Reference/eBay/FetchToken.html
+     * for all possible attributes.
+     *
+     * @return array key = 'Token', value = 'the Token' OR key = 'Error:' and value =
+     * 'The error message'
+     * EX. ['Error:' => 'An error occurred during the request and a token could not be retrieved.']
+     */
+    public function fetchToken(array $attributes)
+    {
+
+        $request_body = '<?xml version="1.0" encoding="utf-8"?>' . "\n";
+        $request_body .= '<FetchTokenRequest xmlns="urn:ebay:apis:eBLBaseComponents">' . "\n";
+
+        /* Call-specific Input Fields */
+        if (isset($attributes['SecretID'])) {
+
+            $request_body .= '<SecretID>' . $attributes['SecretID'] . '</SecretID>' . "\n";
+
+        }
+
+        if (isset($attributes['SessionID'])) {
+
+            $request_body .= '<SessionID>' . $attributes['SessionID'] . '</SessionID>' . "\n";
+
+        }
+
+        /* Standard Input Fields - MessageID required attribute to prevent csrf attacks */
+        if (isset($attributes['MessageID'])) {
+
+            $request_body .= '<MessageID>' . $attributes['MessageID'] . '</MessageID>' . "\n";
+
+        }
+
+        $request_body .= '<ErrorLanguage>' . $this->api_error_language . '</ErrorLanguage>' . "\n";
+        $request_body .= '<Version>' . $this->api_compatibility_level . '</Version>' . "\n";
+        $request_body .= '<WarningLevel>' . $this->api_warning_level . '</WarningLevel>' . "\n";
+
+        $request_body .= '</FetchTokenRequest>';
+
+        $responseXml = L5ebtapiController::request('FetchToken', $request_body);
+
+        if (stristr($responseXml, 'HTTP 404')) {
+
+            Log::error('eBay API Call: fetchToken() 404 Not Found');
+
+            return ['Error:' => '404 Not Found. Please verify all eBay API settings are correct and try again.'];
+
+        }
+
+        if ($responseXml == '') {
+
+            Log::error('eBay API Call: fetchToken() Error sending request the XML response is an empty string');
+
+            return ['Error:' => 'The XML response is an empty string. Please verify all eBay API settings are correct' .
+                'and try again.'];
+
+        }
+
+        //Xml string is parsed and creates a DOM Document object
+        $responseDoc = new DomDocument();
+
+        $responseDoc->loadXML($responseXml);
+
+        //get any error nodes
+        $errors = $responseDoc->getElementsByTagName('Errors');
+
+        //if there are error nodes return the error message (array)
+        if ($errors->length > 0) {
+
+            $code = $errors->item(0)->getElementsByTagName('ErrorCode');
+
+            $shortMsg = $errors->item(0)->getElementsByTagName('ShortMessage');
+
+            $longMsg = $errors->item(0)->getElementsByTagName('LongMessage');
+
+            //if there is a long message (ie ErrorLevel=1), construct the error message array with short & long message
+            if (count($longMsg) > 0) {
+
+                Log::warning('eBay API Call: fetchToken(). Short message: ' .
+                    $code->item(0)->nodeValue . ' : ' . $shortMsg->item(0)->nodeValue);
+
+                Log::warning('eBay API Call: fetchToken(). Long message: ' .
+                    $longMsg->item(0)->nodeValue);
+
+            } else {
+
+                Log::warning('eBay API Call: fetchToken(). Short message: ' .
+                    $code->item(0)->nodeValue . ' : ' . $shortMsg->item(0)->nodeValue);
+
+            }
+
+            return ['Error:' => 'An error occurred while processing the fetchToken() request.' .
+                'Please verify all eBay API settings are correct and try the request again.'];
+
+        } else //no errors so return the session id as a (string)
+        {
+
+            $xml = simplexml_load_string($responseDoc->saveXML());
+
+            if ($xml->eBayAuthToken) {
+
+                if ($xml->Ack && ((string)$xml->Ack == 'Success')) {
+
+                    if ($xml->eBayAuthToken) {
+
+                        return ['Token' => (string)$xml->eBayAuthToken];
+
+                    } else {
+
+                        $token = ['Error:' => 'An error occurred While processing the fetchToken() request.' .
+                            'Please verify all eBay API settings are correct and try the request again.'];
+
+                        return $token;
+
+                    }
+
+                }
+            }
+
+        }
+
+    }// END fetchToken()
+
+    /**
      * Method: getEbayDetails(array attributes) - Retrieves eBay IDs and codes for Example shipping service codes,
      * enumerated data for Example payment methods, and other common eBay meta-data.
      *
@@ -1875,52 +2005,52 @@ class L5ebtapiController extends Controller
 
             $request_body .= '<ItemCompatibilityList>' . "\n";
 
-                if (isset($attributes['ItemCompatibilityList']['Compatibility'])) {
+            if (isset($attributes['ItemCompatibilityList']['Compatibility'])) {
 
-                    foreach ($attributes['ItemCompatibilityList']['Compatibility'] as $compatibility) {
+                foreach ($attributes['ItemCompatibilityList']['Compatibility'] as $compatibility) {
 
-                        $request_body .= '<Compatibility>' . "\n";
+                    $request_body .= '<Compatibility>' . "\n";
 
-                        if (isset($compatibility['CompatibilityNotes'])) {
+                    if (isset($compatibility['CompatibilityNotes'])) {
 
-                            $request_body .= '<CompatibilityNotes>' . $compatibility['CompatibilityNotes'] .
-                                '</CompatibilityNotes>' . "\n";
-
-                        }
-
-                        if (isset($compatibility['NameValueList'])) {
-
-                            foreach ($compatibility['NameValueList'] as $nameValueList) {
-
-                                $request_body .= '<NameValueList>' . "\n";
-
-                                if (isset($nameValueList['Name'])) {
-
-                                    $request_body .= '<Name>' . $nameValueList['Name'] . '</Name>' . "\n";
-
-                                }
-
-                                if (isset($nameValueList['Value'])) {
-
-                                    foreach ($nameValueList['Value'] as $value) {
-
-                                        $request_body .= '<Value>' . $value . '</Value>' . "\n";
-
-                                    }
-
-                                }
-
-                                $request_body .= '</NameValueList>' . "\n";
-
-                            }
-
-                        }
-
-                        $request_body .= '</Compatibility>' . "\n";
+                        $request_body .= '<CompatibilityNotes>' . $compatibility['CompatibilityNotes'] .
+                            '</CompatibilityNotes>' . "\n";
 
                     }
 
+                    if (isset($compatibility['NameValueList'])) {
+
+                        foreach ($compatibility['NameValueList'] as $nameValueList) {
+
+                            $request_body .= '<NameValueList>' . "\n";
+
+                            if (isset($nameValueList['Name'])) {
+
+                                $request_body .= '<Name>' . $nameValueList['Name'] . '</Name>' . "\n";
+
+                            }
+
+                            if (isset($nameValueList['Value'])) {
+
+                                foreach ($nameValueList['Value'] as $value) {
+
+                                    $request_body .= '<Value>' . $value . '</Value>' . "\n";
+
+                                }
+
+                            }
+
+                            $request_body .= '</NameValueList>' . "\n";
+
+                        }
+
+                    }
+
+                    $request_body .= '</Compatibility>' . "\n";
+
                 }
+
+            }
 
             $request_body .= '</ItemCompatibilityList>' . "\n";
 
@@ -2635,7 +2765,8 @@ class L5ebtapiController extends Controller
                 }
 
                 if (isset($attributes['ShippingDetails']['CalculatedShippingRate']['WeightMajorUnit']) &&
-                    isset($attributes['ShippingDetails']['CalculatedShippingRate']['WeightMajor'])) {
+                    isset($attributes['ShippingDetails']['CalculatedShippingRate']['WeightMajor'])
+                ) {
 
                     $request_body .= '<WeightMajor unit="' .
                         $attributes['ShippingDetails']['CalculatedShippingRate']['WeightMajorUnit'] . '">' .
@@ -2645,7 +2776,8 @@ class L5ebtapiController extends Controller
                 }
 
                 if (isset($attributes['ShippingDetails']['CalculatedShippingRate']['WeightMinorUnit']) &&
-                    isset($attributes['ShippingDetails']['CalculatedShippingRate']['WeightMinor'])) {
+                    isset($attributes['ShippingDetails']['CalculatedShippingRate']['WeightMinor'])
+                ) {
 
                     $request_body .= '<WeightMinor unit="' .
                         $attributes['ShippingDetails']['CalculatedShippingRate']['WeightMinorUnit'] . '">' .
@@ -2778,7 +2910,8 @@ class L5ebtapiController extends Controller
                     }
 
                     if (isset($internationalShippingServiceOption['ShippingServiceAdditionalCostCurrencyID']) &&
-                        isset($internationalShippingServiceOption['ShippingServiceAdditionalCost'])) {
+                        isset($internationalShippingServiceOption['ShippingServiceAdditionalCost'])
+                    ) {
 
                         $request_body .= '<ShippingServiceAdditionalCost currencyID="' .
                             $internationalShippingServiceOption['ShippingServiceAdditionalCostCurrencyID'] . '">' .
@@ -2788,7 +2921,8 @@ class L5ebtapiController extends Controller
                     }
 
                     if (isset($internationalShippingServiceOption['ShippingServiceCostCurrencyID']) &&
-                        isset($internationalShippingServiceOption['ShippingServiceCost'])) {
+                        isset($internationalShippingServiceOption['ShippingServiceCost'])
+                    ) {
 
                         $request_body .= '<ShippingServiceCost currencyID="' .
                             $internationalShippingServiceOption['ShippingServiceCostCurrencyID'] . '">' .
@@ -2924,7 +3058,8 @@ class L5ebtapiController extends Controller
                     }
 
                     if (isset($shippingServiceOption['ShippingServiceAdditionalCostCurrencyID']) &&
-                        isset($shippingServiceOption['ShippingServiceAdditionalCost'])) {
+                        isset($shippingServiceOption['ShippingServiceAdditionalCost'])
+                    ) {
 
                         $request_body .= '<ShippingServiceAdditionalCost currencyID="' .
                             $shippingServiceOption['ShippingServiceAdditionalCostCurrencyID'] . '">' .
@@ -2934,7 +3069,8 @@ class L5ebtapiController extends Controller
                     }
 
                     if (isset($shippingServiceOption['ShippingServiceCostCurrencyID']) &&
-                        isset($shippingServiceOption['ShippingServiceCost'])) {
+                        isset($shippingServiceOption['ShippingServiceCost'])
+                    ) {
 
                         $request_body .= '<ShippingServiceCost currencyID="' .
                             $shippingServiceOption['ShippingServiceCostCurrencyID'] . '">' .
@@ -3025,7 +3161,8 @@ class L5ebtapiController extends Controller
             }
 
             if (isset($attributes['ShippingPackageDetails']['WeightMajorUnit']) &&
-                isset($attributes['ShippingPackageDetails']['WeightMajor'])) {
+                isset($attributes['ShippingPackageDetails']['WeightMajor'])
+            ) {
 
                 $request_body .= '<WeightMajor Unit="' .
                     $attributes['ShippingPackageDetails']['WeightMajorUnit'] . '">' .
@@ -3035,7 +3172,8 @@ class L5ebtapiController extends Controller
             }
 
             if (isset($attributes['ShippingPackageDetails']['WeightMinorUnit']) &&
-                isset($attributes['ShippingPackageDetails']['WeightMinor'])) {
+                isset($attributes['ShippingPackageDetails']['WeightMinor'])
+            ) {
 
                 $request_body .= '<WeightMinor Unit="' .
                     $attributes['ShippingPackageDetails']['WeightMinorUnit'] . '">' .
@@ -3059,7 +3197,8 @@ class L5ebtapiController extends Controller
                     $request_body .= '<ShippingServiceCostOverride>' . "\n";
 
                     if (isset($shippingServiceCostOverride['ShippingServiceAdditionalCostCurrencyID']) &&
-                        isset($shippingServiceCostOverride['ShippingServiceAdditionalCost'])) {
+                        isset($shippingServiceCostOverride['ShippingServiceAdditionalCost'])
+                    ) {
 
                         $request_body .= '<ShippingServiceAdditionalCost currencyID="' .
                             $shippingServiceCostOverride['ShippingServiceAdditionalCostCurrencyID'] . '">' .
