@@ -1,10 +1,10 @@
 <?php
 
-namespace rodshaffer\l5ebtapi\facades;
+namespace rodshaffer\l5ebtapi\Facades;
 
 use Illuminate\Support\Facades\Facade;
 
-class L5ebtapiFacade extends Facade
+class L5ebtapi extends Facade
 {
 
     /**
