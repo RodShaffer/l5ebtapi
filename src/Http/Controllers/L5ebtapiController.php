@@ -363,8 +363,8 @@ class L5ebtapiController extends Controller
      * http://developer.ebay.com/DevZone/XML/docs/Reference/eBay/FetchToken.html
      * for all possible attributes.
      *
-     * @return array key = 'Token', value = 'the Token' OR key = 'Error:' and value =
-     * 'The error message'
+     * @return mixed simpleXml containing the eBayAuthToken, HardExpirationTime, and RESTToken.
+     * or an array with key = 'Error:' and value = 'The error message'
      * EX. ['Error:' => 'An error occurred during the request and a token could not be retrieved.']
      */
     public function fetchToken(array $attributes)
@@ -372,11 +372,6 @@ class L5ebtapiController extends Controller
 
         $request_body = '<?xml version="1.0" encoding="utf-8"?>' . "\n";
         $request_body .= '<FetchTokenRequest xmlns="urn:ebay:apis:eBLBaseComponents">' . "\n";
-        $request_body .= '<RequesterCredentials>' . "\n";
-        $request_body .= '<DevId>' . $this->api_dev_id . '</DevId>' . "\n";
-        $request_body .= '<AppId>' . $this->api_app_id . '</AppId>' . "\n";
-        $request_body .= '<AuthCert>' . $this->api_cert_id . '</AuthCert>' . "\n";
-        $request_body .= '</RequesterCredentials>' . "\n";
 
         /* Call-specific Input Fields */
         if (isset($attributes['SecretID'])) {
@@ -459,32 +454,10 @@ class L5ebtapiController extends Controller
             return ['Error:' => 'An error occurred while processing the fetchToken() request.' .
                 'Please verify all eBay API settings are correct and try the request again.'];
 
-        } else //no errors so return the session id as a (string)
+        } else //no errors so return the xml containing the token and expiration
         {
 
-            $xml = simplexml_load_string($responseDoc->saveXML());
-
-            return $xml;
-
-            /*if ($xml->eBayAuthToken) {
-
-                if ($xml->Ack && ((string)$xml->Ack == 'Success')) {
-
-                    if ($xml->eBayAuthToken) {
-
-                        return ['Token' => (string)$xml->eBayAuthToken];
-
-                    } else {
-
-                        $token = ['Error:' => 'An error occurred While processing the fetchToken() request.' .
-                            'Please verify all eBay API settings are correct and try the request again.'];
-
-                        return $token;
-
-                    }
-
-                }
-            }*/
+            return $responseDoc->saveXML();
 
         }
 
