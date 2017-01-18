@@ -262,6 +262,8 @@ class L5ebtapiController extends Controller
         $request_body .= '<WarningLevel>' . $this->api_warning_level . '</WarningLevel>' . "\n";
         $request_body .= '</GetSessionIDRequest>​​​';
 
+        //dd($request_body);
+
         $responseXml = L5ebtapiController::request('GetSessionID', $request_body);
 
         if (stristr($responseXml, 'HTTP 404')) {
@@ -370,6 +372,11 @@ class L5ebtapiController extends Controller
 
         $request_body = '<?xml version="1.0" encoding="utf-8"?>' . "\n";
         $request_body .= '<FetchTokenRequest xmlns="urn:ebay:apis:eBLBaseComponents">' . "\n";
+        $request_body .= '<RequesterCredentials>' . "\n";
+        $request_body .= '<DevId>' . $this->api_dev_id . '</DevId>' . "\n";
+        $request_body .= '<AppId>' . $this->api_app_id . '</AppId>' . "\n";
+        $request_body .= '<AuthCert>' . $this->api_cert_id . '</AuthCert>' . "\n";
+        $request_body .= '</RequesterCredentials>' . "\n";
 
         /* Call-specific Input Fields */
         if (isset($attributes['SecretID'])) {
@@ -457,7 +464,9 @@ class L5ebtapiController extends Controller
 
             $xml = simplexml_load_string($responseDoc->saveXML());
 
-            if ($xml->eBayAuthToken) {
+            return $xml;
+
+            /*if ($xml->eBayAuthToken) {
 
                 if ($xml->Ack && ((string)$xml->Ack == 'Success')) {
 
@@ -475,7 +484,7 @@ class L5ebtapiController extends Controller
                     }
 
                 }
-            }
+            }*/
 
         }
 
