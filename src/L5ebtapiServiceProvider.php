@@ -31,9 +31,9 @@ class L5ebtapiServiceProvider extends ServiceProvider
         $this->setupRoutes($this->app->router);
 
         // use this if your package needs a config file
-        // $this->publishes([
-        //         __DIR__.'/config/config.php' => config_path('skeleton.php'),
-        // ]);
+        $this->publishes([
+                 __DIR__.'/config/l5ebtapi.php' => config_path('l5ebtapi.php'),
+        ]);
 
         // use the vendor configuration file as fallback
         // $this->mergeConfigFrom(

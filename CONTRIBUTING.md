@@ -7,12 +7,11 @@ We accept contributions via Pull Requests on [Github](https://github.com/rodshaf
 I am looking for contributors to the project as I am doing everything right now. Anyone interested in contributing may
 contact me directly. Rod Shaffer htmlplus43@yahoo.com
 
-I am also aware that their is already a PHP package developed but I wanted to develop my own and I only use the Trading
-API so that is why the package will only support the Trading API.
+I am also aware that their is already a PHP package developed but I wanted to develop my own to cut down on code size
+as I only use the Trading API so that is why the package will only support the Trading API.
 
 The package is being developed using Laravel 5.2 and PhpStorm. So far I have been able to accomplish everything simply
-using SimpleXML, DOMDocument, GuzzleHttp. Other then the four API methods I currently have written this is pretty much
-a skeleton project. Everything in place and working for the package without too many dependencies.
+using SimpleXMLElement, DOMDocument, GuzzleHttp.
 
 I need contributors with all kinds of experience. I'm not only looking for programmers but also anyone that would be
 interested in writing documentation. However I am sure their are also other ways I have missed how someone could

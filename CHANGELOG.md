@@ -4,18 +4,41 @@ All Notable changes to `l5ebtapi` will be documented in this file.
 
 Updates should follow the [Keep a CHANGELOG](http://keepachangelog.com/) principles.
 
-## NEXT - 2017-01-31
+## NEXT - 2017-07-31
 
 ### Added
-- Method: getEbayOfficialTime() - get the eBay official time.
+Config file for the app's eBay developer credentials. Use vendor:publish to publish a default config file(l5ebtapi.php)
+to the config directory. Make sure to edit and save this file before using l5ebtapi.
+
+- Method: getEbayOfficialTime(array $attributes) - get the eBay official time.
+
+- Method: getSessionId(array $attributes) - Use this call to retrieve a SessionID, which is a unique identifier
+that you use for authentication during the token-creation process. You must have a valid SessionID value in order to
+make a FetchToken request.
+
+- Method: fetchToken(array $attributes) - Use this call to retrieve an authentication token for a user. The call can be
+used to get a token only after the specified user has given consent for the token to be generated. Consent is given
+through the eBay sign-in page. After token retrieval, the token can be used to authenticate other calls made on behalf
+of the associated user.
+
 - Method: getEbayDetails(array $attributes) - Get various eBay metadata. Example. get the eBay shipping service options.
+
 - Method: getCategories(array $attributes) - Use this call to retrieve the latest category hierarchy for the eBay
 site specified in the CategorySiteID property. By default, this is the site to which you submit the request.
-- Method: uploadSiteHostedPictures(array $attributes, $image) - Use this call to upload a picture to eBay Picture
- Services (EPS). You can either include a binary attachment or supply a URL in the ExternalPictureURL field to the
- location of the picture on an external web server.
+ 
+ - Method: getCategoryFeatures(array $attributes) - returns information that describes the feature and value settings
+ that apply to the set of eBay categories.
+ 
+ - Method: getCategorySpecifics(array $attributes) - Use this call to retrieve the most popular Item Specifics that
+ sellers can use when they list items in certain categories.
+ 
+ - Method: getItem(array $attributes) - Retrieves the eBay item detail.
+ 
+ - Method: uploadSiteHostedPictures(array $attributes, $image) - Use this call to upload a picture to eBay Picture
+  Services (EPS). You can either include a binary attachment or supply a URL in the ExternalPictureURL field to the
+  location of the picture on an external web server.
+ 
 - Method: addFixedPriceItem(array $attributes) - Add an eBay fixed priced item listing. All options now supported.
-- Method: getItem(array $attributes) - Retrieves the eBay item detail.
 
  I will be updating the documentation in the near future. I will also be changing the location that the documentation
  is stored. This will hopefully make the readability better. So please stay tuned for the changes that are coming.
@@ -30,8 +53,8 @@ site specified in the CategorySiteID property. By default, this is the site to w
 - Nothing.
 
 ### Fixed
-- Changed the return type to SimpleXML Object for all methods except getEbayOfficialTime and uploadSiteHostedPictures
-- (Both getEbayOfficialTime and uploadSiteHostedPictures return an array)
+- Changed the return type to SimpleXMLElement object for all methods. This allows access to the XML key/values and also
+a DomDocument object can be easily created if desired.
  
 ### Removed
 - Testing section. No testing setup at this time.

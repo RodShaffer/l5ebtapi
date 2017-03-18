@@ -4,12 +4,16 @@
 [![Software License][ico-license]](LICENSE.md)
 [![Total Downloads][ico-downloads]][link-downloads]
 
-Laravel 5 eBay Trading API Package. Easily add the eBay Trading API capabilities to your Laravel 5 projects.
+Laravel 5 eBay Trading API Package. Easily add the eBay Trading API to your Laravel 5 projects.
 
-#####This package is under development and will be changing frequently. Use at your own risk.
+#####This package is under development and growing. All methods currently written have been tested as much as possible.
+
+While using this library if you come accross any issues please report them to me(Rod) at the email address below. Try to
+provide as much information about the issue as possible. Thank you in advance.
 
 I will be updating the documentation as much as possible but I do have a full time job and between development of this
-package and the custom software I am developing the documentation is kind of lacking sometimes.
+package and the custom software I am developing the documentation is kind of lacking sometimes. Any help would be
+greatly appreciated.
 
 Supports PSR4 Auto loading
 
@@ -25,6 +29,10 @@ Then Add the following to the Application Service Providers array in your config
 
 rodshaffer\l5ebtapi\L5ebtapiServiceProvider::class,
 
+l5ebtapi requires a configuration file (to hold your app's eBay developer account credentials).
+Just execute Laravel's vendor:publish command and l5ebtapi.php(the default config file) will be published to the config
+folder. Make sure you edit and save this file with your app's eBay developer credentials.
+
 ## Usage
 
 For information on usage visit our [Wiki]
@@ -39,7 +47,7 @@ Please see [CONTRIBUTING](CONTRIBUTING.md) and [CONDUCT](CONDUCT.md) for details
 
 ## Security
 
-If you discover any security related issues, please email htmlplus43@@yahoo.com instead of using the issue tracker.
+If you discover any security related issues, please email htmlplus43@yahoo.com instead of using the issue tracker.
 
 ## Credits
 
@@ -49,7 +57,7 @@ If you discover any security related issues, please email htmlplus43@@yahoo.com 
 
 The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
 
-[ico-version]: https://img.shields.io/packagist/v/:vendor/:package_name.svg?style=flat-square
+[ico-version]: https://img.shields.io/packagist/v/:rodshaffer/:l5ebtapi.svg?style=flat-square
 [ico-license]: https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square
 [ico-downloads]: https://img.shields.io/packagist/dt/l5ebtapi/l5ebtapi.svg?style=flat-square
 

@@ -11,26 +11,19 @@ class L5ebtapi
     /**
      * Create a new L5ebtapi Instance.
      */
-    public function __construct()
+    public function __construct(array $attributes)
     {
-        $this->tradingService = new L5ebtapiController();
+        $this->tradingService = new L5ebtapiController($attributes);
     }
 
-    public function init(array $attributes)
-    {
-
-        $this->tradingService->init($attributes);
-
-    }
-
-    public function getEbayOfficialTime(array $attributes)
+    public function getEbayOfficialTime(array $attributes = NULL)
     {
 
         return $this->tradingService->getEbayOfficialTime($attributes);
 
     }
 
-    public function getSessionId(array $attributes) {
+    public function getSessionId(array $attributes = NULL) {
 
         return $this->tradingService->getSessionId($attributes);
 
