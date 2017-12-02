@@ -4,7 +4,7 @@ All Notable changes to `l5ebtapi` will be documented in this file.
 
 Updates should follow the [Keep a CHANGELOG](http://keepachangelog.com/) principles.
 
-## NEXT - 2017-07-31
+#####12/02/2017 - I apologize for the inactivity on the L5ebtapi package but I have had some unforeseen family issues come up and I no longer have time to invest into the L5ebtapi package. If anyone has interest in taking over the project feel free to clone the project on<a href="https://github.com/rodshaffer/l5ebtapi">Github</a>. The project was developed using PhpStorm 2017
 
 ### Added
 Config file for the app's eBay developer credentials. Use vendor:publish to publish a default config file(l5ebtapi.php)
