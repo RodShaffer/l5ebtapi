@@ -6,7 +6,7 @@
 
 Laravel 5 eBay Trading API Package. Easily add the eBay Trading API to your Laravel 5 projects.
 
-#####I apologize for the inactivity on the L5ebtapi package but I have had some unforeseen family issues come up and I no longer have time to invest into the L5ebtapi package. If anyone has interest in taking over the project feel free to clone the project on<a href="https://github.com/rodshaffer/l5ebtapi">Github</a>. The project was developed using PhpStorm 2017
+#####I apologize for the inactivity on the L5ebtapi package but I have had some unforeseen family issues come up and I no longer have time to invest into the L5ebtapi package. If anyone has interest in taking over the project feel free to clone the project. The project was developed using PhpStorm 2017
 
 This package is under development. All methods currently written have been tested as much as possible.
 
